@@ -36,7 +36,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   @override
   void initState() {
     super.initState();
-    // Initialisiere Controller mit Standardwerten von _aktuelleEingabe
+    // Initialisiere Controller mit Standardwerten von der initialen _aktuelleEingabe
     _controllers['anzahlMilchkuehe'] = TextEditingController(
         text: _aktuelleEingabe.anzahlMilchkuehe.toString());
     _controllers['anzahlFaersenZurAbkalbung'] = TextEditingController(
@@ -63,14 +63,16 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                 .toString());
   }
 
+  // Methode zum Auslösen der Berechnungen für alle Szenarien
   void _berechneAlleSzenarien() {
     // Formular vor dem Fortfahren validieren
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!
-          .save(); // Formulardaten in _aktuelleEingabe speichern
+          .save(); // Ruft onSaved für alle Felder auf, _aktuelleEingabe wird aktualisiert
 
       // "Aktuell" (betriebsspezifisches) Szenario berechnen
       setState(() {
+        // UI wird basierend auf der (möglicherweise neuen) _aktuelleEingabe aktualisiert
         _aktuellErgebnis = _berechnungsService.berechne(_aktuelleEingabe);
 
         // Eingabe für "Realistisch" (realistischer Durchschnitt) Szenario vorbereiten
@@ -107,7 +109,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
           haltedauerFaersenkaelberTage: 14, // Empfohlen
           leerstandszeitTage: 7, // Empfohlen
         );
-        // "Empfehlung" Szenario berechnen
+        // "Empfehlung" Szenario berechnen (keine explizite Reserve für dieses Szenario hinzugefügt)
         _empfehlungErgebnis = _berechnungsService.berechne(empfehlungEingabe);
       });
     }
@@ -143,49 +145,16 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
           // Grundlegende Validierung für Prozentsätze
           if (istProzent && (val < 0 /*|| val > 100*/)) {
             // Vorübergehend >100 für Raten wie Abkalberate erlauben
-            // > 100 für einige Raten wie Abkalberate in manchen Systemen erlauben, aber generell nicht für Anteil etc.
           }
           if (val < 0) return 'Wert muss positiv sein';
           return null;
         },
         onSaved: (wert) {
-          // Den geparsten Double-Wert im entsprechenden Feld in _aktuelleEingabe speichern
+          // Den geparsten Double-Wert holen
           final val = double.tryParse(wert ?? "0") ?? 0;
-          switch (schluessel) {
-            case 'anzahlMilchkuehe':
-              _aktuelleEingabe.anzahlMilchkuehe = val;
-              break;
-            case 'anzahlFaersenZurAbkalbung':
-              _aktuelleEingabe.anzahlFaersenZurAbkalbung = val;
-              break;
-            case 'anteilMaennlicherKaelberProzent':
-              _aktuelleEingabe.anteilMaennlicherKaelberProzent = val;
-              break;
-            case 'zwischenkalbezeitTage':
-              _aktuelleEingabe.zwischenkalbezeitTage = val;
-              break;
-            case 'haltedauerBullenkaelberTage':
-              _aktuelleEingabe.haltedauerBullenkaelberTage = val;
-              break;
-            case 'haltedauerFaersenkaelberTage':
-              _aktuelleEingabe.haltedauerFaersenkaelberTage = val;
-              break;
-            case 'leerstandszeitTage':
-              _aktuelleEingabe.leerstandszeitTage = val;
-              break;
-            case 'abkalberateProzent':
-              _aktuelleEingabe.abkalberateProzent = val;
-              break;
-            case 'fruehmortalitaetProzent':
-              _aktuelleEingabe.fruehmortalitaetProzent = val;
-              break;
-            case 'totgeburtenrateProzent':
-              _aktuelleEingabe.totgeburtenrateProzent = val;
-              break;
-            case 'anteilZwillingstraechtigkeitenProzent':
-              _aktuelleEingabe.anteilZwillingstraechtigkeitenProzent = val;
-              break;
-          }
+          // _aktuelleEingabe mit der neuen Instanz überschreiben,
+          // die von der aktualisiereFeld-Methode zurückgegeben wird.
+          _aktuelleEingabe = _aktuelleEingabe.aktualisiereFeld(schluessel, val);
         },
       ),
     );
@@ -206,7 +175,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
       body: SingleChildScrollView(
         padding: EdgeInsets.all(isSmallScreen
             ? 12.0
-            : 24.0), // Padding für kleine Bildschirme anpasse
+            : 24.0), // Padding für kleine Bildschirme anpassen
         child: Form(
           key: _formKey,
           child: Column(
@@ -220,7 +189,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-
+              // Eingabeabschnitte mit ExpansionPanelList
               ExpansionPanelList(
                 expansionCallback: (int index, bool isExpanded) {
                   setState(() {
@@ -294,7 +263,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                   style: ElevatedButton.styleFrom(
                     textStyle: const TextStyle(fontSize: 16),
                     minimumSize: const Size(200,
-                        50), // Sichersellen, dass der Button eine angemessene Größe hat
+                        50), // Sicherstellen, dass der Button eine angemessene Größe hat
                   ),
                 ),
               ),
@@ -331,8 +300,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         child: Column(children: children),
       ),
       isExpanded: isExpanded,
-      canTapOnHeader:
-          true, // Ermöglicht das Einklappen durch Tippen auf den Header
+      canTapOnHeader: true,
     );
   }
 
@@ -341,9 +309,8 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
     // Formatiert einen Double-Wert auf eine Dezimalstelle für die Anzeige
     String formatiereDouble(double? val) {
       if (val == null) return '-';
-      // Auf 1 Dezimalstelle runden und in String umwandeln
-      return (val.roundToDouble() / 1.0).toStringAsFixed(
-          1); // Korrigiert für korrekte Rundung auf 1 Dezimalstelle
+      // Auf 1 Dezimalstelle runden und als String mit einer Nachkommastelle formatieren
+      return val.toStringAsFixed(1);
     }
 
     return Column(
@@ -361,7 +328,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
           // Tabelle auf kleinen Bildschirmen horizontal scrollbar machen
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            columnSpacing: 20, // Abstand zwischen Spalten
+            columnSpacing: 20,
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(8.0),

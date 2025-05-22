@@ -1,16 +1,15 @@
-// Datenmodell für Berechnungseingaben
 class BerechnungsEingabe {
-  double anzahlMilchkuehe;
-  double anzahlFaersenZurAbkalbung;
-  double anteilMaennlicherKaelberProzent;
-  double zwischenkalbezeitTage;
-  double haltedauerBullenkaelberTage;
-  double haltedauerFaersenkaelberTage;
-  double leerstandszeitTage;
-  double abkalberateProzent;
-  double fruehmortalitaetProzent;
-  double totgeburtenrateProzent;
-  double anteilZwillingstraechtigkeitenProzent;
+  final double anzahlMilchkuehe;
+  final double anzahlFaersenZurAbkalbung;
+  final double anteilMaennlicherKaelberProzent;
+  final double zwischenkalbezeitTage;
+  final double haltedauerBullenkaelberTage;
+  final double haltedauerFaersenkaelberTage;
+  final double leerstandszeitTage;
+  final double abkalberateProzent;
+  final double fruehmortalitaetProzent;
+  final double totgeburtenrateProzent;
+  final double anteilZwillingstraechtigkeitenProzent;
 
   BerechnungsEingabe({
     this.anzahlMilchkuehe = 100,
@@ -22,11 +21,11 @@ class BerechnungsEingabe {
     this.leerstandszeitTage = 7,
     this.abkalberateProzent = 90,
     this.fruehmortalitaetProzent = 3,
-    this.totgeburtenrateProzent = 4,
+    this.totgeburtenrateProzent =
+        4, // Standardwert, kann 0 sein, wenn der Benutzer nichts eingibt
     this.anteilZwillingstraechtigkeitenProzent = 3,
   });
 
-  // Hilfsmethode, um eine Kopie mit spezifischen Änderungen für Szenarien zu erstellen
   BerechnungsEingabe copyWith({
     double? anzahlMilchkuehe,
     double? anzahlFaersenZurAbkalbung,
@@ -62,5 +61,38 @@ class BerechnungsEingabe {
           anteilZwillingstraechtigkeitenProzent ??
               this.anteilZwillingstraechtigkeitenProzent,
     );
+  }
+
+  // NEUE METHODE: Auslagerung von Switch
+  BerechnungsEingabe aktualisiereFeld(String feldName, double wert) {
+    switch (feldName) {
+      case 'anzahlMilchkuehe':
+        return copyWith(anzahlMilchkuehe: wert);
+      case 'anzahlFaersenZurAbkalbung':
+        return copyWith(anzahlFaersenZurAbkalbung: wert);
+      case 'anteilMaennlicherKaelberProzent':
+        return copyWith(anteilMaennlicherKaelberProzent: wert);
+      case 'zwischenkalbezeitTage':
+        return copyWith(zwischenkalbezeitTage: wert);
+      case 'haltedauerBullenkaelberTage':
+        return copyWith(haltedauerBullenkaelberTage: wert);
+      case 'haltedauerFaersenkaelberTage':
+        return copyWith(haltedauerFaersenkaelberTage: wert);
+      case 'leerstandszeitTage':
+        return copyWith(leerstandszeitTage: wert);
+      case 'abkalberateProzent':
+        return copyWith(abkalberateProzent: wert);
+      case 'fruehmortalitaetProzent':
+        return copyWith(fruehmortalitaetProzent: wert);
+      case 'totgeburtenrateProzent':
+        return copyWith(totgeburtenrateProzent: wert);
+      case 'anteilZwillingstraechtigkeitenProzent':
+        return copyWith(anteilZwillingstraechtigkeitenProzent: wert);
+      default:
+        // Optional: Fehler loggen oder eine Ausnahme werfen, wenn das Feld unbekannt ist
+        print(
+            'Unbekanntes Feld in BerechnungsEingabe.aktualisiereFeld: $feldName');
+        return this; // Gibt die aktuelle (unveränderte) Instanz zurück
+    }
   }
 }
