@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math';
 
 import '../models/berechnungs_eingabe.dart';
 import '../models/szenario_ergebnis.dart';
 import '../services/berechnungs_service.dart';
+import '../widgets/ergebnis_tabelle_widget.dart';
 
 class RechnerBildschirm extends StatefulWidget {
   const RechnerBildschirm({super.key});
@@ -22,21 +22,12 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   SzenarioErgebnis? _realistischErgebnis;
   SzenarioErgebnis? _empfehlungErgebnis;
 
-  // Text-Bearbeitungs-Controller für Formularfelder
   final Map<String, TextEditingController> _controllers = {};
-
-  // Zustände der Ausklapp-Panels, um zu steuern, welches Panel geöffnet ist
-  final List<bool> _isExpanded = [
-    true, // Tierzahlen
-    false, // Geschlecht
-    false, // Zeit
-    false // Reproduktion
-  ];
+  final List<bool> _isExpanded = [true, false, false, false];
 
   @override
   void initState() {
     super.initState();
-    // Initialisiere Controller mit Standardwerten von der initialen _aktuelleEingabe
     _controllers['anzahlMilchkuehe'] = TextEditingController(
         text: _aktuelleEingabe.anzahlMilchkuehe.toString());
     _controllers['anzahlFaersenZurAbkalbung'] = TextEditingController(
@@ -63,59 +54,46 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                 .toString());
   }
 
-  // Methode zum Auslösen der Berechnungen für alle Szenarien
+  @override
+  void dispose() {
+    _controllers.forEach((key, controller) {
+      controller.dispose();
+    });
+    super.dispose();
+  }
+
   void _berechneAlleSzenarien() {
-    // Formular vor dem Fortfahren validieren
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!
-          .save(); // Ruft onSaved für alle Felder auf, _aktuelleEingabe wird aktualisiert
-
-      // "Aktuell" (betriebsspezifisches) Szenario berechnen
+      _formKey.currentState!.save();
       setState(() {
-        // UI wird basierend auf der (möglicherweise neuen) _aktuelleEingabe aktualisiert
         _aktuellErgebnis = _berechnungsService.berechne(_aktuelleEingabe);
-
-        // Eingabe für "Realistisch" (realistischer Durchschnitt) Szenario vorbereiten
         BerechnungsEingabe realistischEingabe = _aktuelleEingabe.copyWith(
-          // Betriebsspezifische Eingaben (vom Benutzer): anzahlMilchkuehe, anzahlFaersenZurAbkalbung, anteilMaennlicherKaelberProzent
-          // Feste Durchschnittswerte für "Realistisch" Szenario:
           zwischenkalbezeitTage: 401,
           haltedauerBullenkaelberTage: 28,
           haltedauerFaersenkaelberTage: 14,
           leerstandszeitTage: 7,
           abkalberateProzent: 95,
           fruehmortalitaetProzent: 5,
-          totgeburtenrateProzent:
-              3.95, // Durchschnitt (5% für Färsen, 2.9% für Kühe)
+          totgeburtenrateProzent: 3.95,
           anteilZwillingstraechtigkeitenProzent: 2.9,
         );
-        // "Realistisch" Szenario mit 25% Reserve berechnen
         _realistischErgebnis = _berechnungsService.berechne(realistischEingabe,
             reserveProzent: 25);
 
-        // Eingabe für "Empfehlung" (Beratung) Szenario vorbereiten
-        // ZKZ des Betriebs verwenden, falls länger als 410, ansonsten 410 verwenden
         double empfZKZ = _aktuelleEingabe.zwischenkalbezeitTage > 410
             ? _aktuelleEingabe.zwischenkalbezeitTage
             : 410;
-
         BerechnungsEingabe empfehlungEingabe = _aktuelleEingabe.copyWith(
-          // Betriebsspezifische Eingaben (vom Benutzer): anzahlMilchkuehe, anzahlFaersenZurAbkalbung, anteilMaennlicherKaelberProzent,
-          // abkalberateProzent, fruehmortalitaetProzent, totgeburtenrateProzent, anteilZwillingstraechtigkeitenProzent
-          // Angepasste Werte für "Empfehlung" Szenario:
           zwischenkalbezeitTage: empfZKZ,
-          haltedauerBullenkaelberTage:
-              28, // Gesetzlich vorgeschriebenes Minimum
-          haltedauerFaersenkaelberTage: 14, // Empfohlen
-          leerstandszeitTage: 7, // Empfohlen
+          haltedauerBullenkaelberTage: 28,
+          haltedauerFaersenkaelberTage: 14,
+          leerstandszeitTage: 7,
         );
-        // "Empfehlung" Szenario berechnen (keine explizite Reserve für dieses Szenario hinzugefügt)
         _empfehlungErgebnis = _berechnungsService.berechne(empfehlungEingabe);
       });
     }
   }
 
-  // Hilfs-Widget zum Erstellen eines TextFormField
   Widget _erstelleTextFeld(
       String schluessel, String bezeichnung, String einheit,
       {bool istProzent = false, bool erlaubeDezimal = true}) {
@@ -130,7 +108,6 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         ),
         keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
         inputFormatters: [
-          // Nur Zahlen und optional einen Dezimalpunkt zulassen
           FilteringTextInputFormatter.allow(
               RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*')),
         ],
@@ -142,40 +119,54 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
           if (val == null) {
             return 'Ungültige Zahl';
           }
-          // Grundlegende Validierung für Prozentsätze
-          if (istProzent && (val < 0 /*|| val > 100*/)) {
-            // Vorübergehend >100 für Raten wie Abkalberate erlauben
-          }
+          if (istProzent && (val < 0)) {/* Ggf. weitere Validierung */}
           if (val < 0) return 'Wert muss positiv sein';
           return null;
         },
         onSaved: (wert) {
-          // Den geparsten Double-Wert holen
           final val = double.tryParse(wert ?? "0") ?? 0;
-          // _aktuelleEingabe mit der neuen Instanz überschreiben,
-          // die von der aktualisiereFeld-Methode zurückgegeben wird.
           _aktuelleEingabe = _aktuelleEingabe.aktualisiereFeld(schluessel, val);
         },
       ),
     );
   }
 
+  ExpansionPanel _erstelleAusklappPanel(
+      {required String titel,
+      required bool isExpanded,
+      required List<Widget> children}) {
+    return ExpansionPanel(
+      headerBuilder: (BuildContext context, bool isExpanded) {
+        return ListTile(
+          title: Text(titel,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+        );
+      },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Column(children: children),
+      ),
+      isExpanded: isExpanded,
+      canTapOnHeader: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Grundlegende responsive Layout-Anpassungen basierend auf der Bildschirmbreite
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 600;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('cowculus'),
+        title: const Text('Kälberplatz Kalkulator'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(isSmallScreen
-            ? 12.0
-            : 24.0), // Padding für kleine Bildschirme anpassen
+        padding: EdgeInsets.all(isSmallScreen ? 12.0 : 24.0),
         child: Form(
           key: _formKey,
           child: Column(
@@ -189,7 +180,6 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              // Eingabeabschnitte mit ExpansionPanelList
               ExpansionPanelList(
                 expansionCallback: (int index, bool isExpanded) {
                   setState(() {
@@ -262,142 +252,23 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                   label: const Text('Berechnen'),
                   style: ElevatedButton.styleFrom(
                     textStyle: const TextStyle(fontSize: 16),
-                    minimumSize: const Size(200,
-                        50), // Sicherstellen, dass der Button eine angemessene Größe hat
+                    minimumSize: const Size(200, 50),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              // Ergebnistabelle anzeigen, wenn Berechnungen durchgeführt wurden
               if (_aktuellErgebnis != null &&
                   _realistischErgebnis != null &&
                   _empfehlungErgebnis != null)
-                _erstelleErgebnisTabelle(),
+                ErgebnisTabelleWidget(
+                  aktuellErgebnis: _aktuellErgebnis,
+                  realistischErgebnis: _realistischErgebnis,
+                  empfehlungErgebnis: _empfehlungErgebnis,
+                )
             ],
           ),
         ),
       ),
-    );
-  }
-
-  // Hilfsmethode zum Erstellen eines ExpansionPanel
-  ExpansionPanel _erstelleAusklappPanel(
-      {required String titel,
-      required bool isExpanded,
-      required List<Widget> children}) {
-    return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return ListTile(
-          title: Text(titel,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-        );
-      },
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(children: children),
-      ),
-      isExpanded: isExpanded,
-      canTapOnHeader: true,
-    );
-  }
-
-  // Hilfsmethode zum Erstellen der DataTable für Ergebnisse
-  Widget _erstelleErgebnisTabelle() {
-    // Formatiert einen Double-Wert auf eine Dezimalstelle für die Anzeige
-    String formatiereDouble(double? val) {
-      if (val == null) return '-';
-      // Auf 1 Dezimalstelle runden und als String mit einer Nachkommastelle formatieren
-      return val.toStringAsFixed(1);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Ergebnisse der Kälberplatzberechnung:",
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        SingleChildScrollView(
-          // Tabelle auf kleinen Bildschirmen horizontal scrollbar machen
-          scrollDirection: Axis.horizontal,
-          child: DataTable(
-            columnSpacing: 20,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8.0),
-            ),
-            columns: const [
-              DataColumn(
-                  label: Text('Parameter',
-                      style: TextStyle(fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Aktuell\n(betriebsspez.)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  numeric: true),
-              DataColumn(
-                  label: Text('Realistisch\n(Ø NRW/DE, +25% Res.)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  numeric: true),
-              DataColumn(
-                  label: Text('Empfehlung\n(Beratung)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  numeric: true),
-            ],
-            rows: [
-              DataRow(cells: [
-                const DataCell(Text('Bullenkälber-Plätze')),
-                DataCell(Text(
-                    formatiereDouble(_aktuellErgebnis?.bullenkaelberPlaetze))),
-                DataCell(Text(formatiereDouble(
-                    _realistischErgebnis?.bullenkaelberPlaetze))),
-                DataCell(Text(formatiereDouble(
-                    _empfehlungErgebnis?.bullenkaelberPlaetze))),
-              ]),
-              DataRow(cells: [
-                const DataCell(Text('Färsenkälber-Plätze')),
-                DataCell(Text(
-                    formatiereDouble(_aktuellErgebnis?.faersenkaelberPlaetze))),
-                DataCell(Text(formatiereDouble(
-                    _realistischErgebnis?.faersenkaelberPlaetze))),
-                DataCell(Text(formatiereDouble(
-                    _empfehlungErgebnis?.faersenkaelberPlaetze))),
-              ]),
-              DataRow(
-                  // Gesamtsummenzeile hervorheben
-                  color: MaterialStateProperty.resolveWith<Color?>(
-                      (Set<MaterialState> states) {
-                    return Colors.green.shade50;
-                  }),
-                  cells: [
-                    const DataCell(Text('Gesamt-Plätze',
-                        style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataCell(Text(
-                        formatiereDouble(_aktuellErgebnis?.gesamtPlaetze),
-                        style: const TextStyle(fontWeight: FontWeight.bold))),
-                    DataCell(Text(
-                        formatiereDouble(_realistischErgebnis?.gesamtPlaetze),
-                        style: const TextStyle(fontWeight: FontWeight.bold))),
-                    DataCell(Text(
-                        formatiereDouble(_empfehlungErgebnis?.gesamtPlaetze),
-                        style: const TextStyle(fontWeight: FontWeight.bold))),
-                  ]),
-            ],
-          ),
-        ),
-        const SizedBox(height: 10),
-        const Text(
-          "* Hinweis: 'Realistisch' beinhaltet 25% Reserve auf die Gesamtplätze. 'Bullenkälber-' und 'Färsenkälber-Plätze' werden ohne diese szenariospezifische Reserve ausgewiesen.",
-          style: TextStyle(
-              fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
-        ),
-      ],
     );
   }
 }
