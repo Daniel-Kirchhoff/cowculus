@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 class BerechnungsEingabe {
   final double anzahlMilchkuehe;
   final double anzahlFaersenZurAbkalbung;
@@ -21,8 +23,7 @@ class BerechnungsEingabe {
     this.leerstandszeitTage = 7,
     this.abkalberateProzent = 90,
     this.fruehmortalitaetProzent = 3,
-    this.totgeburtenrateProzent =
-        4, // Standardwert, kann 0 sein, wenn der Benutzer nichts eingibt
+    this.totgeburtenrateProzent = 4,
     this.anteilZwillingstraechtigkeitenProzent = 3,
   });
 
@@ -62,37 +63,55 @@ class BerechnungsEingabe {
               this.anteilZwillingstraechtigkeitenProzent,
     );
   }
+}
 
-  // NEUE METHODE: Auslagerung von Switch
-  BerechnungsEingabe aktualisiereFeld(String feldName, double wert) {
+class BerechnungsEingabeNotifier extends StateNotifier<BerechnungsEingabe> {
+  BerechnungsEingabeNotifier() : super(BerechnungsEingabe());
+
+  void aktualisiereFeld(String feldName, double wert) {
     switch (feldName) {
       case 'anzahlMilchkuehe':
-        return copyWith(anzahlMilchkuehe: wert);
+        state = state.copyWith(anzahlMilchkuehe: wert);
+        break;
       case 'anzahlFaersenZurAbkalbung':
-        return copyWith(anzahlFaersenZurAbkalbung: wert);
+        state = state.copyWith(anzahlFaersenZurAbkalbung: wert);
+        break;
       case 'anteilMaennlicherKaelberProzent':
-        return copyWith(anteilMaennlicherKaelberProzent: wert);
+        state = state.copyWith(anteilMaennlicherKaelberProzent: wert);
+        break;
       case 'zwischenkalbezeitTage':
-        return copyWith(zwischenkalbezeitTage: wert);
+        state = state.copyWith(zwischenkalbezeitTage: wert);
+        break;
       case 'haltedauerBullenkaelberTage':
-        return copyWith(haltedauerBullenkaelberTage: wert);
+        state = state.copyWith(haltedauerBullenkaelberTage: wert);
+        break;
       case 'haltedauerFaersenkaelberTage':
-        return copyWith(haltedauerFaersenkaelberTage: wert);
+        state = state.copyWith(haltedauerFaersenkaelberTage: wert);
+        break;
       case 'leerstandszeitTage':
-        return copyWith(leerstandszeitTage: wert);
+        state = state.copyWith(leerstandszeitTage: wert);
+        break;
       case 'abkalberateProzent':
-        return copyWith(abkalberateProzent: wert);
+        state = state.copyWith(abkalberateProzent: wert);
+        break;
       case 'fruehmortalitaetProzent':
-        return copyWith(fruehmortalitaetProzent: wert);
+        state = state.copyWith(fruehmortalitaetProzent: wert);
+        break;
       case 'totgeburtenrateProzent':
-        return copyWith(totgeburtenrateProzent: wert);
+        state = state.copyWith(totgeburtenrateProzent: wert);
+        break;
       case 'anteilZwillingstraechtigkeitenProzent':
-        return copyWith(anteilZwillingstraechtigkeitenProzent: wert);
+        state = state.copyWith(anteilZwillingstraechtigkeitenProzent: wert);
+        break;
       default:
-        // Optional: Fehler loggen oder eine Ausnahme werfen, wenn das Feld unbekannt ist
-        print(
-            'Unbekanntes Feld in BerechnungsEingabe.aktualisiereFeld: $feldName');
-        return this; // Gibt die aktuelle (unveränderte) Instanz zurück
+        // Optional: Fehlerlogik oder Exception
+        break;
     }
   }
 }
+
+final berechnungsEingabeProvider =
+    StateNotifierProvider<BerechnungsEingabeNotifier, BerechnungsEingabe>(
+        (ref) {
+  return BerechnungsEingabeNotifier();
+});

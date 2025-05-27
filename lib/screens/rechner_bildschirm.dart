@@ -1,21 +1,23 @@
+import 'package:cowculus/config/app_constants.dart';
+import 'package:cowculus/widgets/expansion_panel_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/berechnungs_eingabe.dart';
 import '../models/szenario_ergebnis.dart';
 import '../services/berechnungs_service.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
 
-class RechnerBildschirm extends StatefulWidget {
+class RechnerBildschirm extends ConsumerStatefulWidget {
   const RechnerBildschirm({super.key});
 
   @override
-  State<RechnerBildschirm> createState() => _RechnerBildschirmState();
+  ConsumerState<RechnerBildschirm> createState() => _RechnerBildschirmState();
 }
 
-class _RechnerBildschirmState extends State<RechnerBildschirm> {
+class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   final _formKey = GlobalKey<FormState>();
-  BerechnungsEingabe _aktuelleEingabe = BerechnungsEingabe();
   final BerechnungsService _berechnungsService = BerechnungsService();
 
   SzenarioErgebnis? _aktuellErgebnis;
@@ -24,34 +26,36 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
 
   final Map<String, TextEditingController> _controllers = {};
   final List<bool> _isExpanded = [true, false, false, false];
+  final FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _controllers['anzahlMilchkuehe'] = TextEditingController(
-        text: _aktuelleEingabe.anzahlMilchkuehe.toString());
-    _controllers['anzahlFaersenZurAbkalbung'] = TextEditingController(
-        text: _aktuelleEingabe.anzahlFaersenZurAbkalbung.toString());
-    _controllers['anteilMaennlicherKaelberProzent'] = TextEditingController(
-        text: _aktuelleEingabe.anteilMaennlicherKaelberProzent.toString());
-    _controllers['zwischenkalbezeitTage'] = TextEditingController(
-        text: _aktuelleEingabe.zwischenkalbezeitTage.toString());
-    _controllers['haltedauerBullenkaelberTage'] = TextEditingController(
-        text: _aktuelleEingabe.haltedauerBullenkaelberTage.toString());
-    _controllers['haltedauerFaersenkaelberTage'] = TextEditingController(
-        text: _aktuelleEingabe.haltedauerFaersenkaelberTage.toString());
-    _controllers['leerstandszeitTage'] = TextEditingController(
-        text: _aktuelleEingabe.leerstandszeitTage.toString());
-    _controllers['abkalberateProzent'] = TextEditingController(
-        text: _aktuelleEingabe.abkalberateProzent.toString());
-    _controllers['fruehmortalitaetProzent'] = TextEditingController(
-        text: _aktuelleEingabe.fruehmortalitaetProzent.toString());
-    _controllers['totgeburtenrateProzent'] = TextEditingController(
-        text: _aktuelleEingabe.totgeburtenrateProzent.toString());
-    _controllers['anteilZwillingstraechtigkeitenProzent'] =
-        TextEditingController(
-            text: _aktuelleEingabe.anteilZwillingstraechtigkeitenProzent
-                .toString());
+    final _berechnungEingabeState = ref.read(berechnungsEingabeProvider);
+    final felder = {
+      'anzahlMilchkuehe': _berechnungEingabeState.anzahlMilchkuehe,
+      'anzahlFaersenZurAbkalbung':
+          _berechnungEingabeState.anzahlFaersenZurAbkalbung,
+      'anteilMaennlicherKaelberProzent':
+          _berechnungEingabeState.anteilMaennlicherKaelberProzent,
+      'zwischenkalbezeitTage': _berechnungEingabeState.zwischenkalbezeitTage,
+      'haltedauerBullenkaelberTage':
+          _berechnungEingabeState.haltedauerBullenkaelberTage,
+      'haltedauerFaersenkaelberTage':
+          _berechnungEingabeState.haltedauerFaersenkaelberTage,
+      'leerstandszeitTage': _berechnungEingabeState.leerstandszeitTage,
+      'abkalberateProzent': _berechnungEingabeState.abkalberateProzent,
+      'fruehmortalitaetProzent':
+          _berechnungEingabeState.fruehmortalitaetProzent,
+      'totgeburtenrateProzent': _berechnungEingabeState.totgeburtenrateProzent,
+      'anteilZwillingstraechtigkeitenProzent':
+          _berechnungEingabeState.anteilZwillingstraechtigkeitenProzent,
+    };
+
+    felder.forEach((key, value) {
+      _controllers[key] = TextEditingController(text: value.toString());
+    });
   }
 
   @override
@@ -62,12 +66,15 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
     super.dispose();
   }
 
-  void _berechneAlleSzenarien() {
+  void _berechneAlleSzenarien(BerechnungsEingabe berechnungEingabeState) {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+
+      final berechnungEingabeState = ref.read(berechnungsEingabeProvider);
+
       setState(() {
-        _aktuellErgebnis = _berechnungsService.berechne(_aktuelleEingabe);
-        BerechnungsEingabe realistischEingabe = _aktuelleEingabe.copyWith(
+        _aktuellErgebnis = _berechnungsService.berechne(berechnungEingabeState);
+        BerechnungsEingabe realistischEingabe = berechnungEingabeState.copyWith(
           zwischenkalbezeitTage: 401,
           haltedauerBullenkaelberTage: 28,
           haltedauerFaersenkaelberTage: 14,
@@ -80,10 +87,10 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         _realistischErgebnis = _berechnungsService.berechne(realistischEingabe,
             reserveProzent: 25);
 
-        double empfZKZ = _aktuelleEingabe.zwischenkalbezeitTage > 410
-            ? _aktuelleEingabe.zwischenkalbezeitTage
+        double empfZKZ = berechnungEingabeState.zwischenkalbezeitTage > 410
+            ? berechnungEingabeState.zwischenkalbezeitTage
             : 410;
-        BerechnungsEingabe empfehlungEingabe = _aktuelleEingabe.copyWith(
+        BerechnungsEingabe empfehlungEingabe = berechnungEingabeState.copyWith(
           zwischenkalbezeitTage: empfZKZ,
           haltedauerBullenkaelberTage: 28,
           haltedauerFaersenkaelberTage: 14,
@@ -94,70 +101,11 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
     }
   }
 
-  Widget _erstelleTextFeld(
-      String schluessel, String bezeichnung, String einheit,
-      {bool istProzent = false, bool erlaubeDezimal = true}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: _controllers[schluessel],
-        decoration: InputDecoration(
-          labelText: bezeichnung,
-          hintText: 'Wert eingeben',
-          suffixText: einheit,
-        ),
-        keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(
-              RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*')),
-        ],
-        validator: (wert) {
-          if (wert == null || wert.isEmpty) {
-            return 'Bitte Wert eingeben';
-          }
-          final val = double.tryParse(wert);
-          if (val == null) {
-            return 'Ungültige Zahl';
-          }
-          if (istProzent && (val < 0)) {/* Ggf. weitere Validierung */}
-          if (val < 0) return 'Wert muss positiv sein';
-          return null;
-        },
-        onSaved: (wert) {
-          final val = double.tryParse(wert ?? "0") ?? 0;
-          _aktuelleEingabe = _aktuelleEingabe.aktualisiereFeld(schluessel, val);
-        },
-      ),
-    );
-  }
-
-  ExpansionPanel _erstelleAusklappPanel(
-      {required String titel,
-      required bool isExpanded,
-      required List<Widget> children}) {
-    return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return ListTile(
-          title: Text(titel,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-        );
-      },
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Column(children: children),
-      ),
-      isExpanded: isExpanded,
-      canTapOnHeader: true,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
+    final isSmallScreen = screenWidth < kThresholdScreenWidthToMobile;
+    final berechnungEingabeState = ref.watch(berechnungsEingabeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -165,107 +113,71 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(isSmallScreen ? 12.0 : 24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                "Betriebsindividuelle Parameter eingeben:",
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              ExpansionPanelList(
-                expansionCallback: (int index, bool isExpanded) {
-                  setState(() {
-                    _isExpanded[index] = !_isExpanded[index];
-                  });
-                },
-                elevation: 2,
-                expandedHeaderPadding: EdgeInsets.zero,
-                children: [
-                  _erstelleAusklappPanel(
-                    titel: "Tierzahlen",
-                    isExpanded: _isExpanded[0],
-                    children: [
-                      _erstelleTextFeld(
-                          'anzahlMilchkuehe', 'Anzahl Milchkühe', 'Stk.',
-                          erlaubeDezimal: false),
-                      _erstelleTextFeld('anzahlFaersenZurAbkalbung',
-                          'Anzahl Färsen zur Abkalbung (pro Jahr)', 'Stk.',
-                          erlaubeDezimal: false),
-                    ],
-                  ),
-                  _erstelleAusklappPanel(
-                    titel: "Geschlechterverteilung",
-                    isExpanded: _isExpanded[1],
-                    children: [
-                      _erstelleTextFeld('anteilMaennlicherKaelberProzent',
-                          'Anteil männlicher Kälber', '%',
-                          istProzent: true),
-                    ],
-                  ),
-                  _erstelleAusklappPanel(
-                    titel: "Zeitparameter",
-                    isExpanded: _isExpanded[2],
-                    children: [
-                      _erstelleTextFeld(
-                          'zwischenkalbezeitTage', 'Zwischenkalbezeit', 'Tage'),
-                      _erstelleTextFeld('haltedauerBullenkaelberTage',
-                          'Haltedauer Bullenkälber (Einzelhaltung)', 'Tage'),
-                      _erstelleTextFeld('haltedauerFaersenkaelberTage',
-                          'Haltedauer Färsenkälber (Einzelhaltung)', 'Tage'),
-                      _erstelleTextFeld('leerstandszeitTage',
-                          'Leerstandszeit zwischen Belegungen', 'Tage'),
-                    ],
-                  ),
-                  _erstelleAusklappPanel(
-                    titel: "Reproduktions- & Gesundheitsparameter",
-                    isExpanded: _isExpanded[3],
-                    children: [
-                      _erstelleTextFeld(
-                          'abkalberateProzent', 'Abkalberate', '%',
-                          istProzent: true),
-                      _erstelleTextFeld('fruehmortalitaetProzent',
-                          'Frühmortalität (Kälber bis 28 Tage)', '%',
-                          istProzent: true),
-                      _erstelleTextFeld('totgeburtenrateProzent',
-                          'Totgeburtenrate (optional)', '%',
-                          istProzent: true),
-                      _erstelleTextFeld('anteilZwillingstraechtigkeitenProzent',
-                          'Anteil Zwillingsträchtigkeiten', '%',
-                          istProzent: true),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.calculate),
-                  onPressed: _berechneAlleSzenarien,
-                  label: const Text('Berechnen'),
-                  style: ElevatedButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 16),
-                    minimumSize: const Size(200, 50),
+      body: Scrollbar(
+        controller: _scrollController,
+        thumbVisibility: isSmallScreen ? false : true,
+        trackVisibility: isSmallScreen ? false : true,
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          padding: EdgeInsets.all(
+              isSmallScreen ? kAllPaddingIsMobile : kAllPaddingIsNotMobile),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  "Betriebsindividuelle Parameter eingeben:",
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: kBoxHeightRechner_Bildschirm),
+                CustomExpansionPanelList(
+                  isExpanded: _isExpanded,
+                  controllerMap: _controllers,
+                  expansionCallback: (int index, bool isExpanded) {
+                    setState(() {
+                      _isExpanded[index] = !_isExpanded[index];
+                    });
+                  },
+                  focusNode: _focusNode,
+                ),
+                const SizedBox(height: kBoxHeightRechner_Bildschirm * 2),
+                Center(
+                  child: KeyboardListener(
+                    autofocus: true,
+                    focusNode: _focusNode,
+                    onKeyEvent: (event) {
+                      if (event is KeyUpEvent &&
+                          event.logicalKey == LogicalKeyboardKey.enter) {
+                        _berechneAlleSzenarien(berechnungEingabeState);
+                      }
+                    },
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.calculate),
+                      onPressed: () =>
+                          _berechneAlleSzenarien(berechnungEingabeState),
+                      label: const Text('Berechnen'),
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 16),
+                        minimumSize: const Size(200, 50),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              if (_aktuellErgebnis != null &&
-                  _realistischErgebnis != null &&
-                  _empfehlungErgebnis != null)
-                ErgebnisTabelleWidget(
-                  aktuellErgebnis: _aktuellErgebnis,
-                  realistischErgebnis: _realistischErgebnis,
-                  empfehlungErgebnis: _empfehlungErgebnis,
-                )
-            ],
+                const SizedBox(height: kBoxHeightRechner_Bildschirm * 2),
+                if (_aktuellErgebnis != null &&
+                    _realistischErgebnis != null &&
+                    _empfehlungErgebnis != null)
+                  ErgebnisTabelleWidget(
+                    aktuellErgebnis: _aktuellErgebnis,
+                    realistischErgebnis: _realistischErgebnis,
+                    empfehlungErgebnis: _empfehlungErgebnis,
+                  )
+              ],
+            ),
           ),
         ),
       ),
