@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import './screens/rechner_bildschirm.dart';
 import './config/app_theme.dart';
 
@@ -11,11 +12,13 @@ class KaelberRechnerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Kuhkulus',
-      theme: AppTheme.lightTheme,
-      home: const RechnerBildschirm(),
-      debugShowCheckedModeBanner: false,
+    return ProviderScope(
+      child: MaterialApp(
+        title: 'Kuhkulus',
+        theme: AppTheme.lightTheme,
+        home: const RechnerBildschirm(),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
