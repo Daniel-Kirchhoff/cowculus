@@ -5,6 +5,7 @@ import '../models/berechnungs_eingabe.dart';
 import '../models/szenario_ergebnis.dart';
 import '../services/berechnungs_service.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
+import '../config/app_constants.dart';
 
 class RechnerBildschirm extends StatefulWidget {
   const RechnerBildschirm({super.key});
@@ -23,7 +24,12 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   SzenarioErgebnis? _empfehlungErgebnis;
 
   final Map<String, TextEditingController> _controllers = {};
-  final List<bool> _isExpanded = [true, false, false, false];
+  final List<bool> _isExpanded = [
+    true, // Tierzahlen
+    false, // Geschlecht
+    false, // Zeit
+    false // Reproduktion
+  ];
 
   @override
   void initState() {
@@ -98,12 +104,12 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
       String schluessel, String bezeichnung, String einheit,
       {bool istProzent = false, bool erlaubeDezimal = true}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
       child: TextFormField(
         controller: _controllers[schluessel],
         decoration: InputDecoration(
           labelText: bezeichnung,
-          hintText: 'Wert eingeben',
+          hintText: kTextFieldHint,
           suffixText: einheit,
         ),
         keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
@@ -113,14 +119,14 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         ],
         validator: (wert) {
           if (wert == null || wert.isEmpty) {
-            return 'Bitte Wert eingeben';
+            return kValidatorMsgBitteWertEingeben;
           }
           final val = double.tryParse(wert);
           if (val == null) {
-            return 'Ungültige Zahl';
+            return kValidatorMsgUngueltigeZahl;
           }
           if (istProzent && (val < 0)) {/* Ggf. weitere Validierung */}
-          if (val < 0) return 'Wert muss positiv sein';
+          if (val < 0) return kValidatorMsgWertMussPositivSein;
           return null;
         },
         onSaved: (wert) {
@@ -146,7 +152,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         );
       },
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        padding: kPanelPaddingBody,
         child: Column(children: children),
       ),
       isExpanded: isExpanded,
@@ -157,29 +163,47 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 600;
+    final isSmallScreen = screenWidth < kSmallScreenBreakpoint;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kälberplatz Kalkulator'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Hero(
+              tag: 'appLogo',
+              child: Image.asset(
+                'lib/assets/images/logo.png',
+                height: 30, //
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback, falls das Logo nicht geladen werden kann
+                  return const Icon(Icons.agriculture, size: kIconSizeDefault);
+                },
+              ),
+            ),
+            const SizedBox(
+                width: kPaddingSmall), // Abstand zwischen Logo und Titel
+            const Text(kAppBarTitle),
+          ],
+        ),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(isSmallScreen ? 12.0 : 24.0),
+        padding: isSmallScreen ? kScreenPaddingSmall : kScreenPaddingLarge,
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                "Betriebsindividuelle Parameter eingeben:",
+                kMainParameterFormTitle,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
                     ?.copyWith(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: kPaddingMedium),
               ExpansionPanelList(
                 expansionCallback: (int index, bool isExpanded) {
                   setState(() {
@@ -190,73 +214,83 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                 expandedHeaderPadding: EdgeInsets.zero,
                 children: [
                   _erstelleAusklappPanel(
-                    titel: "Tierzahlen",
+                    titel: kPanelTitleTierzahlen,
                     isExpanded: _isExpanded[0],
                     children: [
-                      _erstelleTextFeld(
-                          'anzahlMilchkuehe', 'Anzahl Milchkühe', 'Stk.',
+                      _erstelleTextFeld('anzahlMilchkuehe', 'Anzahl Milchkühe',
+                          kEinheitStueck,
                           erlaubeDezimal: false),
-                      _erstelleTextFeld('anzahlFaersenZurAbkalbung',
-                          'Anzahl Färsen zur Abkalbung (pro Jahr)', 'Stk.',
+                      _erstelleTextFeld(
+                          'anzahlFaersenZurAbkalbung',
+                          'Anzahl Färsen zur Abkalbung (pro Jahr)',
+                          kEinheitStueck,
                           erlaubeDezimal: false),
                     ],
                   ),
                   _erstelleAusklappPanel(
-                    titel: "Geschlechterverteilung",
+                    titel: kPanelTitleGeschlecht,
                     isExpanded: _isExpanded[1],
                     children: [
                       _erstelleTextFeld('anteilMaennlicherKaelberProzent',
-                          'Anteil männlicher Kälber', '%',
+                          'Anteil männlicher Kälber', kEinheitProzent,
                           istProzent: true),
                     ],
                   ),
                   _erstelleAusklappPanel(
-                    titel: "Zeitparameter",
+                    titel: kPanelTitleZeit,
                     isExpanded: _isExpanded[2],
                     children: [
+                      _erstelleTextFeld('zwischenkalbezeitTage',
+                          'Zwischenkalbezeit', kEinheitTage),
                       _erstelleTextFeld(
-                          'zwischenkalbezeitTage', 'Zwischenkalbezeit', 'Tage'),
-                      _erstelleTextFeld('haltedauerBullenkaelberTage',
-                          'Haltedauer Bullenkälber (Einzelhaltung)', 'Tage'),
-                      _erstelleTextFeld('haltedauerFaersenkaelberTage',
-                          'Haltedauer Färsenkälber (Einzelhaltung)', 'Tage'),
+                          'haltedauerBullenkaelberTage',
+                          'Haltedauer Bullenkälber (Einzelhaltung)',
+                          kEinheitTage),
+                      _erstelleTextFeld(
+                          'haltedauerFaersenkaelberTage',
+                          'Haltedauer Färsenkälber (Einzelhaltung)',
+                          kEinheitTage),
                       _erstelleTextFeld('leerstandszeitTage',
-                          'Leerstandszeit zwischen Belegungen', 'Tage'),
+                          'Leerstandszeit zwischen Belegungen', kEinheitTage),
                     ],
                   ),
                   _erstelleAusklappPanel(
-                    titel: "Reproduktions- & Gesundheitsparameter",
+                    titel: kPanelTitleReproduktion,
                     isExpanded: _isExpanded[3],
                     children: [
                       _erstelleTextFeld(
-                          'abkalberateProzent', 'Abkalberate', '%',
+                          'abkalberateProzent', 'Abkalberate', kEinheitProzent,
                           istProzent: true),
-                      _erstelleTextFeld('fruehmortalitaetProzent',
-                          'Frühmortalität (Kälber bis 28 Tage)', '%',
+                      _erstelleTextFeld(
+                          'fruehmortalitaetProzent',
+                          'Frühmortalität (Kälber bis 28 Tage)',
+                          kEinheitProzent,
                           istProzent: true),
                       _erstelleTextFeld('totgeburtenrateProzent',
-                          'Totgeburtenrate (optional)', '%',
+                          'Totgeburtenrate (optional)', kEinheitProzent,
                           istProzent: true),
                       _erstelleTextFeld('anteilZwillingstraechtigkeitenProzent',
-                          'Anteil Zwillingsträchtigkeiten', '%',
+                          'Anteil Zwillingsträchtigkeiten', kEinheitProzent,
                           istProzent: true),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: kPaddingLarge),
               Center(
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.calculate),
+                  icon: const Icon(Icons.calculate, size: kIconSizeDefault),
                   onPressed: _berechneAlleSzenarien,
-                  label: const Text('Berechnen'),
+                  label: const Text(kButtonTextBerechnen),
                   style: ElevatedButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 16),
-                    minimumSize: const Size(200, 50),
+                    textStyle: Theme.of(context)
+                        .textTheme
+                        .labelLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: kPaddingLarge),
               if (_aktuellErgebnis != null &&
                   _realistischErgebnis != null &&
                   _empfehlungErgebnis != null)
@@ -264,7 +298,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                   aktuellErgebnis: _aktuellErgebnis,
                   realistischErgebnis: _realistischErgebnis,
                   empfehlungErgebnis: _empfehlungErgebnis,
-                )
+                ),
             ],
           ),
         ),
