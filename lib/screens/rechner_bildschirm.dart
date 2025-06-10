@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../models/berechnungs_eingabe.dart';
 import '../models/szenario_ergebnis.dart';
@@ -18,18 +19,11 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   final _formKey = GlobalKey<FormState>();
   BerechnungsEingabe _aktuelleEingabe = BerechnungsEingabe();
   final BerechnungsService _berechnungsService = BerechnungsService();
-
   SzenarioErgebnis? _aktuellErgebnis;
   SzenarioErgebnis? _realistischErgebnis;
   SzenarioErgebnis? _empfehlungErgebnis;
-
   final Map<String, TextEditingController> _controllers = {};
-  final List<bool> _isExpanded = [
-    true, // Tierzahlen
-    false, // Geschlecht
-    false, // Zeit
-    false // Reproduktion
-  ];
+  final List<bool> _isExpanded = [true, false, false, false];
 
   @override
   void initState() {
@@ -62,9 +56,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
 
   @override
   void dispose() {
-    _controllers.forEach((key, controller) {
-      controller.dispose();
-    });
+    _controllers.forEach((key, controller) => controller.dispose());
     super.dispose();
   }
 
@@ -85,7 +77,6 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         );
         _realistischErgebnis = _berechnungsService.berechne(realistischEingabe,
             reserveProzent: 25);
-
         double empfZKZ = _aktuelleEingabe.zwischenkalbezeitTage > 410
             ? _aktuelleEingabe.zwischenkalbezeitTage
             : 410;
@@ -100,8 +91,8 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
     }
   }
 
-  Widget _erstelleTextFeld(
-      String schluessel, String bezeichnung, String einheit,
+  Widget _erstelleTextFeld(BuildContext context, String schluessel,
+      String bezeichnung, String einheit,
       {bool istProzent = false, bool erlaubeDezimal = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
@@ -109,7 +100,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         controller: _controllers[schluessel],
         decoration: InputDecoration(
           labelText: bezeichnung,
-          hintText: kTextFieldHint,
+          hintText: AppLocalizations.of(context)!.textFieldHint,
           suffixText: einheit,
         ),
         keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
@@ -119,14 +110,15 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         ],
         validator: (wert) {
           if (wert == null || wert.isEmpty) {
-            return kValidatorMsgBitteWertEingeben;
+            return AppLocalizations.of(context)!.validatorMsgBitteWertEingeben;
           }
           final val = double.tryParse(wert);
           if (val == null) {
-            return kValidatorMsgUngueltigeZahl;
+            return AppLocalizations.of(context)!.validatorMsgUngueltigeZahl;
           }
-          if (istProzent && (val < 0)) {/* Ggf. weitere Validierung */}
-          if (val < 0) return kValidatorMsgWertMussPositivSein;
+          if (val < 0)
+            return AppLocalizations.of(context)!
+                .validatorMsgWertMussPositivSein;
           return null;
         },
         onSaved: (wert) {
@@ -142,19 +134,15 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
       required bool isExpanded,
       required List<Widget> children}) {
     return ExpansionPanel(
-      headerBuilder: (BuildContext context, bool isExpanded) {
-        return ListTile(
-          title: Text(titel,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600)),
-        );
-      },
-      body: Padding(
-        padding: kPanelPaddingBody,
-        child: Column(children: children),
+      headerBuilder: (context, isExpanded) => ListTile(
+        title: Text(titel,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w600)),
       ),
+      body: Padding(
+          padding: kPanelPaddingBody, child: Column(children: children)),
       isExpanded: isExpanded,
       canTapOnHeader: true,
     );
@@ -162,6 +150,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < kSmallScreenBreakpoint;
 
@@ -172,18 +161,13 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
           children: [
             Hero(
               tag: 'appLogo',
-              child: Image.asset(
-                'lib/assets/images/logo.png',
-                height: 30, //
-                errorBuilder: (context, error, stackTrace) {
-                  // Fallback, falls das Logo nicht geladen werden kann
-                  return const Icon(Icons.agriculture, size: kIconSizeDefault);
-                },
-              ),
+              child: Image.asset('assets/images/logo.png',
+                  height: 30,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.agriculture, size: kIconSizeDefault)),
             ),
-            const SizedBox(
-                width: kPaddingSmall), // Abstand zwischen Logo und Titel
-            const Text(kAppBarTitle),
+            const SizedBox(width: kPaddingSmall),
+            Text(l10n.appBarTitle),
           ],
         ),
         centerTitle: true,
@@ -197,7 +181,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Text(
-                kMainParameterFormTitle,
+                l10n.mainParameterFormTitle,
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
@@ -205,72 +189,94 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
               ),
               const SizedBox(height: kPaddingMedium),
               ExpansionPanelList(
-                expansionCallback: (int index, bool isExpanded) {
-                  setState(() {
-                    _isExpanded[index] = !_isExpanded[index];
-                  });
-                },
+                expansionCallback: (index, isExpanded) =>
+                    setState(() => _isExpanded[index] = !_isExpanded[index]),
                 elevation: 2,
                 expandedHeaderPadding: EdgeInsets.zero,
                 children: [
                   _erstelleAusklappPanel(
-                    titel: kPanelTitleTierzahlen,
+                    titel: l10n.panelTitleTierzahlen,
                     isExpanded: _isExpanded[0],
                     children: [
-                      _erstelleTextFeld('anzahlMilchkuehe', 'Anzahl Milchkühe',
-                          kEinheitStueck,
+                      _erstelleTextFeld(
+                          context,
+                          'anzahlMilchkuehe',
+                          l10n.textFormFieldLabelAnzahlMilchkuehe,
+                          l10n.einheitStueck,
                           erlaubeDezimal: false),
                       _erstelleTextFeld(
+                          context,
                           'anzahlFaersenZurAbkalbung',
-                          'Anzahl Färsen zur Abkalbung (pro Jahr)',
-                          kEinheitStueck,
+                          l10n.textFormFieldLabelAnzahlFaersen,
+                          l10n.einheitStueck,
                           erlaubeDezimal: false),
                     ],
                   ),
                   _erstelleAusklappPanel(
-                    titel: kPanelTitleGeschlecht,
+                    titel: l10n.panelTitleGeschlecht,
                     isExpanded: _isExpanded[1],
                     children: [
-                      _erstelleTextFeld('anteilMaennlicherKaelberProzent',
-                          'Anteil männlicher Kälber', kEinheitProzent,
+                      _erstelleTextFeld(
+                          context,
+                          'anteilMaennlicherKaelberProzent',
+                          l10n.textFormFieldLabelAnteilMaennlKaelber,
+                          l10n.einheitProzent,
                           istProzent: true),
                     ],
                   ),
                   _erstelleAusklappPanel(
-                    titel: kPanelTitleZeit,
+                    titel: l10n.panelTitleZeit,
                     isExpanded: _isExpanded[2],
                     children: [
-                      _erstelleTextFeld('zwischenkalbezeitTage',
-                          'Zwischenkalbezeit', kEinheitTage),
                       _erstelleTextFeld(
+                          context,
+                          'zwischenkalbezeitTage',
+                          l10n.textFormFieldLabelZwischenkalbezeit,
+                          l10n.einheitTage),
+                      _erstelleTextFeld(
+                          context,
                           'haltedauerBullenkaelberTage',
-                          'Haltedauer Bullenkälber (Einzelhaltung)',
-                          kEinheitTage),
+                          l10n.textFormFieldLabelHaltedauerBullen,
+                          l10n.einheitTage),
                       _erstelleTextFeld(
+                          context,
                           'haltedauerFaersenkaelberTage',
-                          'Haltedauer Färsenkälber (Einzelhaltung)',
-                          kEinheitTage),
-                      _erstelleTextFeld('leerstandszeitTage',
-                          'Leerstandszeit zwischen Belegungen', kEinheitTage),
+                          l10n.textFormFieldLabelHaltedauerFaersen,
+                          l10n.einheitTage),
+                      _erstelleTextFeld(
+                          context,
+                          'leerstandszeitTage',
+                          l10n.textFormFieldLabelLeerstandszeit,
+                          l10n.einheitTage),
                     ],
                   ),
                   _erstelleAusklappPanel(
-                    titel: kPanelTitleReproduktion,
+                    titel: l10n.panelTitleReproduktion,
                     isExpanded: _isExpanded[3],
                     children: [
                       _erstelleTextFeld(
-                          'abkalberateProzent', 'Abkalberate', kEinheitProzent,
+                          context,
+                          'abkalberateProzent',
+                          l10n.textFormFieldLabelAbkalberate,
+                          l10n.einheitProzent,
                           istProzent: true),
                       _erstelleTextFeld(
+                          context,
                           'fruehmortalitaetProzent',
-                          'Frühmortalität (Kälber bis 28 Tage)',
-                          kEinheitProzent,
+                          l10n.textFormFieldLabelFruehmortalitaet,
+                          l10n.einheitProzent,
                           istProzent: true),
-                      _erstelleTextFeld('totgeburtenrateProzent',
-                          'Totgeburtenrate (optional)', kEinheitProzent,
+                      _erstelleTextFeld(
+                          context,
+                          'totgeburtenrateProzent',
+                          l10n.textFormFieldLabelTotgeburtenrate,
+                          l10n.einheitProzent,
                           istProzent: true),
-                      _erstelleTextFeld('anteilZwillingstraechtigkeitenProzent',
-                          'Anteil Zwillingsträchtigkeiten', kEinheitProzent,
+                      _erstelleTextFeld(
+                          context,
+                          'anteilZwillingstraechtigkeitenProzent',
+                          l10n.textFormFieldLabelZwillingstraechtigkeiten,
+                          l10n.einheitProzent,
                           istProzent: true),
                     ],
                   ),
@@ -281,7 +287,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.calculate, size: kIconSizeDefault),
                   onPressed: _berechneAlleSzenarien,
-                  label: const Text(kButtonTextBerechnen),
+                  label: Text(l10n.buttonTextBerechnen),
                   style: ElevatedButton.styleFrom(
                     textStyle: Theme.of(context)
                         .textTheme

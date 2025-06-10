@@ -21,8 +21,7 @@ class BerechnungsEingabe {
     this.leerstandszeitTage = 7,
     this.abkalberateProzent = 90,
     this.fruehmortalitaetProzent = 3,
-    this.totgeburtenrateProzent =
-        4, // Standardwert, kann 0 sein, wenn der Benutzer nichts eingibt
+    this.totgeburtenrateProzent = 4,
     this.anteilZwillingstraechtigkeitenProzent = 3,
   });
 
@@ -63,7 +62,6 @@ class BerechnungsEingabe {
     );
   }
 
-  // NEUE METHODE: Auslagerung von Switch
   BerechnungsEingabe aktualisiereFeld(String feldName, double wert) {
     switch (feldName) {
       case 'anzahlMilchkuehe':
@@ -89,7 +87,6 @@ class BerechnungsEingabe {
       case 'anteilZwillingstraechtigkeitenProzent':
         return copyWith(anteilZwillingstraechtigkeitenProzent: wert);
       default:
-        // Optional: Fehler loggen oder eine Ausnahme werfen, wenn das Feld unbekannt ist
         print(
             'Unbekanntes Feld in BerechnungsEingabe.aktualisiereFeld: $feldName');
         return this; // Gibt die aktuelle (unveränderte) Instanz zurück

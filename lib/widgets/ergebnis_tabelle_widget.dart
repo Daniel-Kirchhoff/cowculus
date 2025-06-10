@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../models/szenario_ergebnis.dart';
+import '../config/app_constants.dart';
 
 class ErgebnisTabelleWidget extends StatelessWidget {
   final SzenarioErgebnis? aktuellErgebnis;
@@ -20,6 +23,7 @@ class ErgebnisTabelleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (aktuellErgebnis == null ||
         realistischErgebnis == null ||
         empfehlungErgebnis == null) {
@@ -30,41 +34,41 @@ class ErgebnisTabelleWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Ergebnisse der Kälberplatzberechnung:",
+          l10n.resultsTitle,
           style: Theme.of(context)
               .textTheme
               .titleLarge
               ?.copyWith(fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: kPaddingMedium),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            columnSpacing: 20,
+            columnSpacing: kDataTableColumnSpacing,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(8.0),
+              border: Border.all(color: kDataTableBorderColor),
+              borderRadius: BorderRadius.circular(kAppBorderRadius),
             ),
-            columns: const [
+            columns: [
               DataColumn(
-                  label: Text('Parameter',
-                      style: TextStyle(fontWeight: FontWeight.bold))),
+                  label: Text(l10n.columnHeaderParameter,
+                      style: const TextStyle(fontWeight: FontWeight.bold))),
               DataColumn(
-                  label: Text('Aktuell\n(betriebsspez.)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  label: Text(l10n.columnHeaderAktuell,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   numeric: true),
               DataColumn(
-                  label: Text('Realistisch\n(Ø NRW/DE, +25% Res.)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  label: Text(l10n.columnHeaderRealistisch,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   numeric: true),
               DataColumn(
-                  label: Text('Empfehlung\n(Beratung)',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  label: Text(l10n.columnHeaderEmpfehlung,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   numeric: true),
             ],
             rows: [
               DataRow(cells: [
-                const DataCell(Text('Bullenkälber-Plätze')),
+                DataCell(Text(l10n.rowLabelBullenkaelber)),
                 DataCell(Text(
                     _formatiereDouble(aktuellErgebnis?.bullenkaelberPlaetze))),
                 DataCell(Text(_formatiereDouble(
@@ -73,7 +77,7 @@ class ErgebnisTabelleWidget extends StatelessWidget {
                     empfehlungErgebnis?.bullenkaelberPlaetze))),
               ]),
               DataRow(cells: [
-                const DataCell(Text('Färsenkälber-Plätze')),
+                DataCell(Text(l10n.rowLabelFaersenkaelber)),
                 DataCell(Text(
                     _formatiereDouble(aktuellErgebnis?.faersenkaelberPlaetze))),
                 DataCell(Text(_formatiereDouble(
@@ -83,12 +87,10 @@ class ErgebnisTabelleWidget extends StatelessWidget {
               ]),
               DataRow(
                   color: MaterialStateProperty.resolveWith<Color?>(
-                      (Set<MaterialState> states) {
-                    return Colors.green.shade50;
-                  }),
+                      (states) => kTotalRowHighlightColor),
                   cells: [
-                    const DataCell(Text('Gesamt-Plätze',
-                        style: TextStyle(fontWeight: FontWeight.bold))),
+                    DataCell(Text(l10n.rowLabelGesamtPlaetze,
+                        style: const TextStyle(fontWeight: FontWeight.bold))),
                     DataCell(Text(
                         _formatiereDouble(aktuellErgebnis?.gesamtPlaetze),
                         style: const TextStyle(fontWeight: FontWeight.bold))),
@@ -102,11 +104,13 @@ class ErgebnisTabelleWidget extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 10),
-        const Text(
-          "* Hinweis: 'Realistisch' beinhaltet 25% Reserve auf die Gesamtplätze. 'Bullenkälber-' und 'Färsenkälber-Plätze' werden ohne diese szenariospezifische Reserve ausgewiesen.",
+        const SizedBox(height: kPaddingSmall + 2),
+        Text(
+          l10n.hinweisTextTabelle,
           style: TextStyle(
-              fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
+              fontSize: kHintTextFontSize,
+              fontStyle: FontStyle.italic,
+              color: kHintTextColor),
         ),
       ],
     );

@@ -1,0 +1,51 @@
+{
+  "@@locale": "de",
+  "appTitle": "cowculus",
+  "appBarTitle": "AppBarTitle Placeholder",
+  "calculatorTitle": "Kälberplatz Kalkulator",
+  "welcomeMessage": "Willkommen bei {appName}!",
+  "welcomeSubtitle": "WelcomeSubtitle Placeholder",
+  "@welcomeMessage": {
+    "description": "Willkommensnachricht auf dem Startbildschirm",
+    "placeholders": {
+      "appName": {
+        "type": "String",
+        "example": "cowculus"
+      }
+    }
+  },
+  "startCalculatorButton": "Rechner starten",
+  "mainParameterFormTitle": "Betriebsindividuelle Parameter eingeben:",
+  "resultsTitle": "Ergebnisse der Kälberplatzberechnung:",
+  "panelTitleTierzahlen": "Tierzahlen",
+  "panelTitleGeschlecht": "Geschlechterverteilung",
+  "panelTitleZeit": "Zeitparameter",
+  "panelTitleReproduktion": "Reproduktions- & Gesundheitsparameter",
+  "columnHeaderParameter": "Parameter",
+  "columnHeaderAktuell": "Aktuell\n(betriebsspez.)",
+  "columnHeaderRealistisch": "Realistisch\n(Ø NRW/DE, +25% Res.)",
+  "columnHeaderEmpfehlung": "Empfehlung\n(Beratung)",
+  "rowLabelBullenkaelber": "Bullenkälber-Plätze",
+  "rowLabelFaersenkaelber": "Färsenkälber-Plätze",
+  "rowLabelGesamtPlaetze": "Gesamt-Plätze",
+  "buttonTextBerechnen": "Berechnen",
+  "hinweisTextTabelle": "* Hinweis: 'Realistisch' beinhaltet 25% Reserve auf die Gesamtplätze. 'Bullenkälber-' und 'Färsenkälber-Plätze' werden ohne diese szenariospezifische Reserve ausgewiesen.",
+  "textFieldHint": "Wert eingeben",
+  "validatorMsgBitteWertEingeben": "Bitte Wert eingeben",
+  "validatorMsgUngueltigeZahl": "Ungültige Zahl",
+  "validatorMsgWertMussPositivSein": "Wert muss positiv sein",
+  "einheitStueck": "Stk.",
+  "einheitProzent": "%",
+  "einheitTage": "Tage",
+  "textFormFieldLabelAnzahlMilchkuehe": "Anzahl Milchkühe",
+  "textFormFieldLabelAnzahlFaersen": "Anzahl Färsen zur Abkalbung (pro Jahr)",
+  "textFormFieldLabelAnteilMaennlKaelber": "Anteil männlicher Kälber",
+  "textFormFieldLabelZwischenkalbezeit": "Zwischenkalbezeit",
+  "textFormFieldLabelHaltedauerBullen": "Haltedauer Bullenkälber (Einzelhaltung)",
+  "textFormFieldLabelHaltedauerFaersen": "Haltedauer Färsenkälber (Einzelhaltung)",
+  "textFormFieldLabelLeerstandszeit": "Leerstandszeit zwischen Belegungen",
+  "textFormFieldLabelAbkalberate": "Abkalberate",
+  "textFormFieldLabelFruehmortalitaet": "Frühmortalität (Kälber bis 28 Tage)",
+  "textFormFieldLabelTotgeburtenrate": "Totgeburtenrate (optional)",
+  "textFormFieldLabelZwillingstraechtigkeiten": "Anteil Zwillingsträchtigkeiten"
+}

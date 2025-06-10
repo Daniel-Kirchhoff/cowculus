@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import './rechner_bildschirm.dart';
 import '../config/app_constants.dart';
@@ -13,8 +14,6 @@ class StartBildschirm extends StatefulWidget {
 
 class _StartBildschirmState extends State<StartBildschirm>
     with SingleTickerProviderStateMixin {
-  // Variablen für Animationen
-  bool _contentVisible = false;
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -22,40 +21,21 @@ class _StartBildschirmState extends State<StartBildschirm>
   @override
   void initState() {
     super.initState();
-
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1200), // Gesamtdauer der Animation
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-
-    // Skalierungsanimation für das Logo
     _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.elasticOut,
-      ),
+      CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
-
-    // Fade-In Animation für Text und Button
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: const Interval(
-          0.4,
-          1.0,
-          curve: Curves.easeIn,
-        ),
+        curve: const Interval(0.4, 1.0, curve: Curves.easeIn),
       ),
     );
-
     Timer(const Duration(milliseconds: 200), () {
-      if (mounted) {
-        setState(() {
-          _contentVisible =
-              true; // Macht initiale Elemente sichtbar, falls nicht animiert
-        });
-        _animationController.forward(); // Startet die definierten Animationen
-      }
+      if (mounted) _animationController.forward();
     });
   }
 
@@ -85,17 +65,14 @@ class _StartBildschirmState extends State<StartBildschirm>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              // Logo mit Hero-Animation und Skalierungsanimation
               ScaleTransition(
                 scale: _scaleAnimation,
                 child: Hero(
                   tag: 'appLogo',
                   child: Image.asset(
-                    'lib/assets/images/logo.png',
-                    width: screenWidth * 0.4, // Responsive Breite
-                    // height: 150,
+                    'assets/images/logo.png',
+                    width: screenWidth * 0.4,
                     errorBuilder: (context, error, stackTrace) {
-                      // Fallback, falls das Logo nicht geladen werden kann
                       return const Icon(Icons.agriculture,
                           size: 100, color: kSeedColor);
                     },
@@ -103,12 +80,11 @@ class _StartBildschirmState extends State<StartBildschirm>
                 ),
               ),
               SizedBox(height: screenHeight * 0.05),
-
-              // Willkommenstext mit Fade-In Animation
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: Text(
-                  'Willkommen bei cowculus!',
+                  AppLocalizations.of(context)!
+                      .welcomeMessage(AppLocalizations.of(context)!.appTitle),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -117,11 +93,10 @@ class _StartBildschirmState extends State<StartBildschirm>
                 ),
               ),
               SizedBox(height: screenHeight * 0.02),
-
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: Text(
-                  'Ihr Helfer für die Kälberplatzplanung.', // Untertitel
+                  AppLocalizations.of(context)!.welcomeSubtitle,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -129,8 +104,6 @@ class _StartBildschirmState extends State<StartBildschirm>
                 ),
               ),
               SizedBox(height: screenHeight * 0.08),
-
-              // Button zum Weiterklicken mit Fade-In Animation
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: ElevatedButton.icon(
@@ -144,7 +117,8 @@ class _StartBildschirmState extends State<StartBildschirm>
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   onPressed: _navigateToRechner,
-                  label: const Text(kButtonTextBerechnen),
+                  label:
+                      Text(AppLocalizations.of(context)!.startCalculatorButton),
                 ),
               ),
             ],
