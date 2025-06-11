@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './rechner_bildschirm.dart';
 import '../config/app_constants.dart';
@@ -14,6 +15,8 @@ class StartBildschirm extends StatefulWidget {
 
 class _StartBildschirmState extends State<StartBildschirm>
     with SingleTickerProviderStateMixin {
+  bool _skipNextTime = false;
+
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -45,80 +48,135 @@ class _StartBildschirmState extends State<StartBildschirm>
     super.dispose();
   }
 
-  void _navigateToRechner() {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const RechnerBildschirm()),
-    );
+  Future<void> _navigateToRechner() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool('skipSplash', _skipNextTime);
+
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const RechnerBildschirm()),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Center(
-        child: SingleChildScrollView(
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.all(kPaddingLarge),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              ScaleTransition(
-                scale: _scaleAnimation,
-                child: Hero(
-                  tag: 'appLogo',
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    width: screenWidth * 0.4,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.agriculture,
-                          size: 100, color: kSeedColor);
-                    },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Hero(
+                    tag: 'appLogo',
+                    child: Image.asset('assets/images/logo.png',
+                        height: 80,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.agriculture,
+                                size: 80, color: kSeedColor)),
+                  ),
+                  Image.asset('assets/images/fh_logo.png',
+                      height: 60,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.school, size: 60)),
+                ],
+              ),
+
+              // Texte und Animationen
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ScaleTransition(
+                          scale: _scaleAnimation,
+                          child: Text(
+                            l10n.welcomeHeadline,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
+                        ),
+                        const SizedBox(height: kPaddingMedium),
+                        FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Text(
+                            l10n.splashExplanation,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        const SizedBox(height: kPaddingLarge),
+                        FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: Text(
+                            l10n.masterThesisCredit,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              SizedBox(height: screenHeight * 0.05),
+
+              // Checkbox und Button
               FadeTransition(
                 opacity: _fadeAnimation,
-                child: Text(
-                  AppLocalizations.of(context)!
-                      .welcomeMessage(AppLocalizations.of(context)!.appTitle),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Checkbox(
+                          value: _skipNextTime,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              _skipNextTime = value ?? false;
+                            });
+                          },
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _skipNextTime = !_skipNextTime;
+                            });
+                          },
+                          child: Text(l10n.skipSplashCheckboxLabel),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: kPaddingSmall),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                      style: ElevatedButton.styleFrom(
+                        padding: kButtonPadding.add(const EdgeInsets.symmetric(
+                            vertical: kPaddingSmall / 2)),
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.02),
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Text(
-                  AppLocalizations.of(context)!.welcomeSubtitle,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.08),
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.arrow_forward_rounded),
-                  style: ElevatedButton.styleFrom(
-                    padding: kButtonPadding.add(const EdgeInsets.symmetric(
-                        vertical: kPaddingSmall / 2)),
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: _navigateToRechner,
-                  label:
-                      Text(AppLocalizations.of(context)!.startCalculatorButton),
+                      onPressed: _navigateToRechner,
+                      label: Text(l10n.startCalculatorButton),
+                    ),
+                  ],
                 ),
               ),
             ],

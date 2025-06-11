@@ -16,12 +16,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calculatorTitle => 'Calf Pen Calculator';
 
   @override
-  String welcomeMessage(String appName) {
-    return 'Welcome to $appName!';
-  }
+  String get welcomeHeadline => 'Welcome to cowculus!';
 
   @override
-  String get welcomeSubtitle => 'WelcomeSubtitle Placeholder';
+  String get welcomeSubtitle => 'This app is based on the master’s thesis by Maren Thiemann and brings her calculation tool for determining the need for individual calf pens into practice. Designed for dairy farmers and advisors, it helps you calculate your specific space requirements and identify opportunities to improve calf housing management.';
+
+  @override
+  String get splashExplanation => 'This app helps you determine the required number of calf pens for your farm.';
+
+  @override
+  String get masterThesisCredit => 'Developed as part of the master\'s thesis by M. Thiemann, FH Südwestfalen.';
+
+  @override
+  String get skipSplashCheckboxLabel => 'Skip this page next time';
 
   @override
   String get startCalculatorButton => 'Start Calculator';

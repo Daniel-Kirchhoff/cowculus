@@ -3,8 +3,11 @@
   "appTitle": "cowculus",
   "appBarTitle": "AppBarTitle Placeholder",
   "calculatorTitle": "Kälberplatz Kalkulator",
-  "welcomeMessage": "Willkommen bei {appName}!",
-  "welcomeSubtitle": "WelcomeSubtitle Placeholder",
+  "welcomeHeadline": "Willkommen bei cowculus!",
+  "welcomeSubtitle": "Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Entwickelt für Milchviehhalter und Berater, unterstützt sie Sie dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.",
+  "splashExplanation": "Diese App hilft Ihnen bei der Ermittlung des Bedarfs an Kälberplätzen für Ihren landwirtschaftlichen Betrieb.",
+  "masterThesisCredit": "Entwickelt im Rahmen der Masterarbeit von M. Thiemann, FH Südwestfalen.",
+  "skipSplashCheckboxLabel": "Startseite beim nächsten Mal überspringen",
   "@welcomeMessage": {
     "description": "Willkommensnachricht auf dem Startbildschirm",
     "placeholders": {

@@ -16,12 +16,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get calculatorTitle => 'Kälberplatz Kalkulator';
 
   @override
-  String welcomeMessage(String appName) {
-    return 'Willkommen bei $appName!';
-  }
+  String get welcomeHeadline => 'Willkommen bei cowculus!';
 
   @override
-  String get welcomeSubtitle => 'WelcomeSubtitle Placeholder';
+  String get welcomeSubtitle => 'Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Entwickelt für Milchviehhalter und Berater, unterstützt sie Sie dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.';
+
+  @override
+  String get splashExplanation => 'Diese App hilft Ihnen bei der Ermittlung des Bedarfs an Kälberplätzen für Ihren landwirtschaftlichen Betrieb.';
+
+  @override
+  String get masterThesisCredit => 'Entwickelt im Rahmen der Masterarbeit von M. Thiemann, FH Südwestfalen.';
+
+  @override
+  String get skipSplashCheckboxLabel => 'Startseite beim nächsten Mal überspringen';
 
   @override
   String get startCalculatorButton => 'Rechner starten';
