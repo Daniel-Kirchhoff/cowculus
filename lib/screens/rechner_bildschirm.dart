@@ -25,9 +25,12 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   final Map<String, TextEditingController> _controllers = {};
   final List<bool> _isExpanded = [true, false, false, false];
 
+  late final FocusNode _buttonFocusNode;
+
   @override
   void initState() {
     super.initState();
+    _buttonFocusNode = FocusNode();
     _controllers['anzahlMilchkuehe'] = TextEditingController(
         text: _aktuelleEingabe.anzahlMilchkuehe.toString());
     _controllers['anzahlFaersenZurAbkalbung'] = TextEditingController(
@@ -56,12 +59,13 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
 
   @override
   void dispose() {
+    _buttonFocusNode.dispose();
     _controllers.forEach((key, controller) => controller.dispose());
     super.dispose();
   }
 
   void _berechneAlleSzenarien() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState!.save();
       setState(() {
         _aktuellErgebnis = _berechnungsService.berechne(_aktuelleEingabe);
@@ -106,19 +110,17 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
         inputFormatters: [
           FilteringTextInputFormatter.allow(
-              RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*')),
+              RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
         ],
+        onFieldSubmitted: (_) => _berechneAlleSzenarien(),
         validator: (wert) {
-          if (wert == null || wert.isEmpty) {
-            return AppLocalizations.of(context)!.validatorMsgBitteWertEingeben;
-          }
-          final val = double.tryParse(wert);
-          if (val == null) {
-            return AppLocalizations.of(context)!.validatorMsgUngueltigeZahl;
-          }
-          if (val < 0)
-            return AppLocalizations.of(context)!
-                .validatorMsgWertMussPositivSein;
+          final l10n = AppLocalizations.of(context)!;
+          if (wert == null || wert.isEmpty)
+            return l10n.validatorMsgBitteWertEingeben;
+          if (double.tryParse(wert) == null)
+            return l10n.validatorMsgUngueltigeZahl;
+          if (double.parse(wert) < 0)
+            return l10n.validatorMsgWertMussPositivSein;
           return null;
         },
         onSaved: (wert) {
@@ -173,139 +175,153 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
-      body: SingleChildScrollView(
-        padding: isSmallScreen ? kScreenPaddingSmall : kScreenPaddingLarge,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                l10n.mainParameterFormTitle,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: kPaddingMedium),
-              ExpansionPanelList(
-                expansionCallback: (index, isExpanded) =>
-                    setState(() => _isExpanded[index] = !_isExpanded[index]),
-                elevation: 2,
-                expandedHeaderPadding: EdgeInsets.zero,
-                children: [
-                  _erstelleAusklappPanel(
-                    titel: l10n.panelTitleTierzahlen,
-                    isExpanded: _isExpanded[0],
-                    children: [
-                      _erstelleTextFeld(
-                          context,
-                          'anzahlMilchkuehe',
-                          l10n.textFormFieldLabelAnzahlMilchkuehe,
-                          l10n.einheitStueck,
-                          erlaubeDezimal: false),
-                      _erstelleTextFeld(
-                          context,
-                          'anzahlFaersenZurAbkalbung',
-                          l10n.textFormFieldLabelAnzahlFaersen,
-                          l10n.einheitStueck,
-                          erlaubeDezimal: false),
-                    ],
-                  ),
-                  _erstelleAusklappPanel(
-                    titel: l10n.panelTitleGeschlecht,
-                    isExpanded: _isExpanded[1],
-                    children: [
-                      _erstelleTextFeld(
-                          context,
-                          'anteilMaennlicherKaelberProzent',
-                          l10n.textFormFieldLabelAnteilMaennlKaelber,
-                          l10n.einheitProzent,
-                          istProzent: true),
-                    ],
-                  ),
-                  _erstelleAusklappPanel(
-                    titel: l10n.panelTitleZeit,
-                    isExpanded: _isExpanded[2],
-                    children: [
-                      _erstelleTextFeld(
-                          context,
-                          'zwischenkalbezeitTage',
-                          l10n.textFormFieldLabelZwischenkalbezeit,
-                          l10n.einheitTage),
-                      _erstelleTextFeld(
-                          context,
-                          'haltedauerBullenkaelberTage',
-                          l10n.textFormFieldLabelHaltedauerBullen,
-                          l10n.einheitTage),
-                      _erstelleTextFeld(
-                          context,
-                          'haltedauerFaersenkaelberTage',
-                          l10n.textFormFieldLabelHaltedauerFaersen,
-                          l10n.einheitTage),
-                      _erstelleTextFeld(
-                          context,
-                          'leerstandszeitTage',
-                          l10n.textFormFieldLabelLeerstandszeit,
-                          l10n.einheitTage),
-                    ],
-                  ),
-                  _erstelleAusklappPanel(
-                    titel: l10n.panelTitleReproduktion,
-                    isExpanded: _isExpanded[3],
-                    children: [
-                      _erstelleTextFeld(
-                          context,
-                          'abkalberateProzent',
-                          l10n.textFormFieldLabelAbkalberate,
-                          l10n.einheitProzent,
-                          istProzent: true),
-                      _erstelleTextFeld(
-                          context,
-                          'fruehmortalitaetProzent',
-                          l10n.textFormFieldLabelFruehmortalitaet,
-                          l10n.einheitProzent,
-                          istProzent: true),
-                      _erstelleTextFeld(
-                          context,
-                          'totgeburtenrateProzent',
-                          l10n.textFormFieldLabelTotgeburtenrate,
-                          l10n.einheitProzent,
-                          istProzent: true),
-                      _erstelleTextFeld(
-                          context,
-                          'anteilZwillingstraechtigkeitenProzent',
-                          l10n.textFormFieldLabelZwillingstraechtigkeiten,
-                          l10n.einheitProzent,
-                          istProzent: true),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: kPaddingLarge),
-              Center(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.calculate, size: kIconSizeDefault),
-                  onPressed: _berechneAlleSzenarien,
-                  label: Text(l10n.buttonTextBerechnen),
-                  style: ElevatedButton.styleFrom(
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .labelLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SingleChildScrollView(
+          padding: isSmallScreen ? kScreenPaddingSmall : kScreenPaddingLarge,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Text(
+                  l10n.mainParameterFormTitle,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: kPaddingMedium),
+                ExpansionPanelList(
+                  expansionCallback: (index, isExpanded) =>
+                      setState(() => _isExpanded[index] = !_isExpanded[index]),
+                  elevation: 2,
+                  expandedHeaderPadding: EdgeInsets.zero,
+                  children: [
+                    _erstelleAusklappPanel(
+                      titel: l10n.panelTitleTierzahlen,
+                      isExpanded: _isExpanded[0],
+                      children: [
+                        _erstelleTextFeld(
+                            context,
+                            'anzahlMilchkuehe',
+                            l10n.textFormFieldLabelAnzahlMilchkuehe,
+                            l10n.einheitStueck,
+                            erlaubeDezimal: false),
+                        _erstelleTextFeld(
+                            context,
+                            'anzahlFaersenZurAbkalbung',
+                            l10n.textFormFieldLabelAnzahlFaersen,
+                            l10n.einheitStueck,
+                            erlaubeDezimal: false),
+                      ],
+                    ),
+                    _erstelleAusklappPanel(
+                      titel: l10n.panelTitleGeschlecht,
+                      isExpanded: _isExpanded[1],
+                      children: [
+                        _erstelleTextFeld(
+                            context,
+                            'anteilMaennlicherKaelberProzent',
+                            l10n.textFormFieldLabelAnteilMaennlKaelber,
+                            l10n.einheitProzent,
+                            istProzent: true),
+                      ],
+                    ),
+                    _erstelleAusklappPanel(
+                      titel: l10n.panelTitleZeit,
+                      isExpanded: _isExpanded[2],
+                      children: [
+                        _erstelleTextFeld(
+                            context,
+                            'zwischenkalbezeitTage',
+                            l10n.textFormFieldLabelZwischenkalbezeit,
+                            l10n.einheitTage),
+                        _erstelleTextFeld(
+                            context,
+                            'haltedauerBullenkaelberTage',
+                            l10n.textFormFieldLabelHaltedauerBullen,
+                            l10n.einheitTage),
+                        _erstelleTextFeld(
+                            context,
+                            'haltedauerFaersenkaelberTage',
+                            l10n.textFormFieldLabelHaltedauerFaersen,
+                            l10n.einheitTage),
+                        _erstelleTextFeld(
+                            context,
+                            'leerstandszeitTage',
+                            l10n.textFormFieldLabelLeerstandszeit,
+                            l10n.einheitTage),
+                      ],
+                    ),
+                    _erstelleAusklappPanel(
+                      titel: l10n.panelTitleReproduktion,
+                      isExpanded: _isExpanded[3],
+                      children: [
+                        _erstelleTextFeld(
+                            context,
+                            'abkalberateProzent',
+                            l10n.textFormFieldLabelAbkalberate,
+                            l10n.einheitProzent,
+                            istProzent: true),
+                        _erstelleTextFeld(
+                            context,
+                            'fruehmortalitaetProzent',
+                            l10n.textFormFieldLabelFruehmortalitaet,
+                            l10n.einheitProzent,
+                            istProzent: true),
+                        _erstelleTextFeld(
+                            context,
+                            'totgeburtenrateProzent',
+                            l10n.textFormFieldLabelTotgeburtenrate,
+                            l10n.einheitProzent,
+                            istProzent: true),
+                        _erstelleTextFeld(
+                            context,
+                            'anteilZwillingstraechtigkeitenProzent',
+                            l10n.textFormFieldLabelZwillingstraechtigkeiten,
+                            l10n.einheitProzent,
+                            istProzent: true),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: kPaddingLarge),
+                Center(
+                  child: KeyboardListener(
+                    focusNode: _buttonFocusNode,
+                    onKeyEvent: (KeyEvent event) {
+                      if (event is KeyDownEvent &&
+                          (event.logicalKey == LogicalKeyboardKey.enter ||
+                              event.logicalKey ==
+                                  LogicalKeyboardKey.numpadEnter)) {
+                        _berechneAlleSzenarien();
+                      }
+                    },
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.calculate, size: kIconSizeDefault),
+                      onPressed: _berechneAlleSzenarien,
+                      label: Text(l10n.buttonTextBerechnen),
+                      style: ElevatedButton.styleFrom(
+                        textStyle: Theme.of(context)
+                            .textTheme
+                            .labelLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: kPaddingLarge),
-              if (_aktuellErgebnis != null &&
-                  _realistischErgebnis != null &&
-                  _empfehlungErgebnis != null)
-                ErgebnisTabelleWidget(
-                  aktuellErgebnis: _aktuellErgebnis,
-                  realistischErgebnis: _realistischErgebnis,
-                  empfehlungErgebnis: _empfehlungErgebnis,
-                ),
-            ],
+                const SizedBox(height: kPaddingLarge),
+                if (_aktuellErgebnis != null &&
+                    _realistischErgebnis != null &&
+                    _empfehlungErgebnis != null)
+                  ErgebnisTabelleWidget(
+                    aktuellErgebnis: _aktuellErgebnis,
+                    realistischErgebnis: _realistischErgebnis,
+                    empfehlungErgebnis: _empfehlungErgebnis,
+                  ),
+              ],
+            ),
           ),
         ),
       ),
