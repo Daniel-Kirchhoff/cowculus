@@ -1,60 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../providers/rechner_providers.dart';
 import '../models/berechnungs_eingabe.dart';
-import '../models/szenario_ergebnis.dart';
-import '../services/berechnungs_service.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
 import '../config/app_constants.dart';
 
-class RechnerBildschirm extends StatefulWidget {
+class RechnerBildschirm extends ConsumerStatefulWidget {
   const RechnerBildschirm({super.key});
 
   @override
-  State<RechnerBildschirm> createState() => _RechnerBildschirmState();
+  ConsumerState<RechnerBildschirm> createState() => _RechnerBildschirmState();
 }
 
-class _RechnerBildschirmState extends State<RechnerBildschirm> {
+class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   final _formKey = GlobalKey<FormState>();
-  BerechnungsEingabe _aktuelleEingabe = BerechnungsEingabe();
-  final BerechnungsService _berechnungsService = BerechnungsService();
-  SzenarioErgebnis? _aktuellErgebnis;
-  SzenarioErgebnis? _realistischErgebnis;
-  SzenarioErgebnis? _empfehlungErgebnis;
   final Map<String, TextEditingController> _controllers = {};
   final List<bool> _isExpanded = [true, false, false, false];
-
   late final FocusNode _buttonFocusNode;
 
   @override
   void initState() {
     super.initState();
     _buttonFocusNode = FocusNode();
-    _controllers['anzahlMilchkuehe'] = TextEditingController(
-        text: _aktuelleEingabe.anzahlMilchkuehe.toString());
+    final eingabe = ref.read(eingabeProvider);
+    _controllers['anzahlMilchkuehe'] =
+        TextEditingController(text: eingabe.anzahlMilchkuehe.toString());
     _controllers['anzahlFaersenZurAbkalbung'] = TextEditingController(
-        text: _aktuelleEingabe.anzahlFaersenZurAbkalbung.toString());
+        text: eingabe.anzahlFaersenZurAbkalbung.toString());
     _controllers['anteilMaennlicherKaelberProzent'] = TextEditingController(
-        text: _aktuelleEingabe.anteilMaennlicherKaelberProzent.toString());
-    _controllers['zwischenkalbezeitTage'] = TextEditingController(
-        text: _aktuelleEingabe.zwischenkalbezeitTage.toString());
+        text: eingabe.anteilMaennlicherKaelberProzent.toString());
+    _controllers['zwischenkalbezeitTage'] =
+        TextEditingController(text: eingabe.zwischenkalbezeitTage.toString());
     _controllers['haltedauerBullenkaelberTage'] = TextEditingController(
-        text: _aktuelleEingabe.haltedauerBullenkaelberTage.toString());
+        text: eingabe.haltedauerBullenkaelberTage.toString());
     _controllers['haltedauerFaersenkaelberTage'] = TextEditingController(
-        text: _aktuelleEingabe.haltedauerFaersenkaelberTage.toString());
-    _controllers['leerstandszeitTage'] = TextEditingController(
-        text: _aktuelleEingabe.leerstandszeitTage.toString());
-    _controllers['abkalberateProzent'] = TextEditingController(
-        text: _aktuelleEingabe.abkalberateProzent.toString());
-    _controllers['fruehmortalitaetProzent'] = TextEditingController(
-        text: _aktuelleEingabe.fruehmortalitaetProzent.toString());
-    _controllers['totgeburtenrateProzent'] = TextEditingController(
-        text: _aktuelleEingabe.totgeburtenrateProzent.toString());
+        text: eingabe.haltedauerFaersenkaelberTage.toString());
+    _controllers['leerstandszeitTage'] =
+        TextEditingController(text: eingabe.leerstandszeitTage.toString());
+    _controllers['abkalberateProzent'] =
+        TextEditingController(text: eingabe.abkalberateProzent.toString());
+    _controllers['fruehmortalitaetProzent'] =
+        TextEditingController(text: eingabe.fruehmortalitaetProzent.toString());
+    _controllers['totgeburtenrateProzent'] =
+        TextEditingController(text: eingabe.totgeburtenrateProzent.toString());
     _controllers['anteilZwillingstraechtigkeitenProzent'] =
         TextEditingController(
-            text: _aktuelleEingabe.anteilZwillingstraechtigkeitenProzent
-                .toString());
+            text: eingabe.anteilZwillingstraechtigkeitenProzent.toString());
   }
 
   @override
@@ -64,34 +58,47 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
     super.dispose();
   }
 
-  void _berechneAlleSzenarien() {
+  void _submitAndCalculate() {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState!.save();
-      setState(() {
-        _aktuellErgebnis = _berechnungsService.berechne(_aktuelleEingabe);
-        BerechnungsEingabe realistischEingabe = _aktuelleEingabe.copyWith(
-          zwischenkalbezeitTage: 401,
-          haltedauerBullenkaelberTage: 28,
-          haltedauerFaersenkaelberTage: 14,
-          leerstandszeitTage: 7,
-          abkalberateProzent: 95,
-          fruehmortalitaetProzent: 5,
-          totgeburtenrateProzent: 3.95,
-          anteilZwillingstraechtigkeitenProzent: 2.9,
-        );
-        _realistischErgebnis = _berechnungsService.berechne(realistischEingabe,
-            reserveProzent: 25);
-        double empfZKZ = _aktuelleEingabe.zwischenkalbezeitTage > 410
-            ? _aktuelleEingabe.zwischenkalbezeitTage
-            : 410;
-        BerechnungsEingabe empfehlungEingabe = _aktuelleEingabe.copyWith(
-          zwischenkalbezeitTage: empfZKZ,
-          haltedauerBullenkaelberTage: 28,
-          haltedauerFaersenkaelberTage: 14,
-          leerstandszeitTage: 7,
-        );
-        _empfehlungErgebnis = _berechnungsService.berechne(empfehlungEingabe);
-      });
+
+      final aktuelleEingabe = ref.read(eingabeProvider);
+      final berechnungsService = ref.read(berechnungsServiceProvider);
+
+      final aktuellErgebnis = berechnungsService.berechne(aktuelleEingabe);
+
+      final realistischEingabe = aktuelleEingabe.copyWith(
+        zwischenkalbezeitTage: 401,
+        haltedauerBullenkaelberTage: 28,
+        haltedauerFaersenkaelberTage: 14,
+        leerstandszeitTage: 7,
+        abkalberateProzent: 95,
+        fruehmortalitaetProzent: 5,
+        totgeburtenrateProzent: 3.95,
+        anteilZwillingstraechtigkeitenProzent: 2.9,
+      );
+      final realistischErgebnis =
+          berechnungsService.berechne(realistischEingabe, reserveProzent: 25);
+
+      final empfZKZ = aktuelleEingabe.zwischenkalbezeitTage > 410.0
+          ? aktuelleEingabe.zwischenkalbezeitTage
+          : 410.0;
+      final empfehlungEingabe = aktuelleEingabe.copyWith(
+        zwischenkalbezeitTage: empfZKZ,
+        haltedauerBullenkaelberTage: 28,
+        haltedauerFaersenkaelberTage: 14,
+        leerstandszeitTage: 7,
+      );
+      final empfehlungErgebnis = berechnungsService.berechne(empfehlungEingabe);
+
+      final ergebnisse = (
+        aktuell: aktuellErgebnis,
+        realistisch: realistischErgebnis,
+        empfehlung: empfehlungErgebnis
+      );
+
+      ref.read(ergebnisProvider.notifier).state = ergebnisse;
     }
   }
 
@@ -112,7 +119,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
           FilteringTextInputFormatter.allow(
               RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
         ],
-        onFieldSubmitted: (_) => _berechneAlleSzenarien(),
+        onFieldSubmitted: (_) => _submitAndCalculate(),
         validator: (wert) {
           final l10n = AppLocalizations.of(context)!;
           if (wert == null || wert.isEmpty)
@@ -125,7 +132,7 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
         },
         onSaved: (wert) {
           final val = double.tryParse(wert ?? "0") ?? 0;
-          _aktuelleEingabe = _aktuelleEingabe.aktualisiereFeld(schluessel, val);
+          ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
         },
       ),
     );
@@ -153,32 +160,28 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < kSmallScreenBreakpoint;
+    final ergebnisse = ref.watch(ergebnisProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Hero(
-              tag: 'appLogo',
-              child: Image.asset('assets/images/logo.png',
-                  height: 30,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.agriculture, size: kIconSizeDefault)),
-            ),
-            const SizedBox(width: kPaddingSmall),
-            Text(l10n.appBarTitle),
-          ],
-        ),
+        title: Row(mainAxisSize: MainAxisSize.min, children: [
+          Hero(
+            tag: 'appLogo',
+            child: Image.asset('assets/images/logo.png',
+                height: 30,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.agriculture, size: kIconSizeDefault)),
+          ),
+          const SizedBox(width: kPaddingSmall),
+          Text(l10n.appBarTitle),
+        ]),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: SingleChildScrollView(
-          padding: isSmallScreen ? kScreenPaddingSmall : kScreenPaddingLarge,
+          padding: const EdgeInsets.all(kPaddingLarge),
           child: Form(
             key: _formKey,
             child: Column(
@@ -295,12 +298,12 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                           (event.logicalKey == LogicalKeyboardKey.enter ||
                               event.logicalKey ==
                                   LogicalKeyboardKey.numpadEnter)) {
-                        _berechneAlleSzenarien();
+                        _submitAndCalculate();
                       }
                     },
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.calculate, size: kIconSizeDefault),
-                      onPressed: _berechneAlleSzenarien,
+                      onPressed: _submitAndCalculate,
                       label: Text(l10n.buttonTextBerechnen),
                       style: ElevatedButton.styleFrom(
                         textStyle: Theme.of(context)
@@ -312,13 +315,11 @@ class _RechnerBildschirmState extends State<RechnerBildschirm> {
                   ),
                 ),
                 const SizedBox(height: kPaddingLarge),
-                if (_aktuellErgebnis != null &&
-                    _realistischErgebnis != null &&
-                    _empfehlungErgebnis != null)
+                if (ergebnisse != null)
                   ErgebnisTabelleWidget(
-                    aktuellErgebnis: _aktuellErgebnis,
-                    realistischErgebnis: _realistischErgebnis,
-                    empfehlungErgebnis: _empfehlungErgebnis,
+                    aktuellErgebnis: ergebnisse.aktuell,
+                    realistischErgebnis: ergebnisse.realistisch,
+                    empfehlungErgebnis: ergebnisse.empfehlung,
                   ),
               ],
             ),
