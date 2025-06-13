@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 
-// === FARBEN ===
-const Color kSeedColor = Colors.green;
-final Color kInputFillColor = Colors.grey[100]!;
-final Color kDataTableBorderColor = Colors.grey.shade300;
-final Color kTotalRowHighlightColor = Colors.green.shade50;
-final Color kHintTextColor = Colors.grey;
+// === LIGHT THEME FARBEN ===
+const Color kLightColorBackground = Color(0xFFD8D2C3);
+const Color kLightColorSurface = Color(0xFFFFFFFF);
+const Color kLightColorPrimary = Color(0xFF5C6D46);
+const Color kLightColorAccent = Color(0xFFA78A6F);
+const Color kLightColorFont1 = Color(0xFF292D32);
+const Color kLightColorFont2 = Color(0xFF8A8A8A);
+
+// === DARK THEME FARBEN ===
+const Color kDarkColorBackground = Color(0xFF585D48);
+const Color kDarkColorSurface = Color(0xFF383D31);
+const Color kDarkColorPrimary = Color(0xFFA4B88F);
+const Color kDarkColorAccent = Color(0xFFC4A989);
+const Color kDarkColorFont1 = Color(0xFFFFFFFF);
+const Color kDarkColorFont2 = Color(0xFFB5B7C0);
 
 // === TEXT STILE & SCHRIFTARTEN ===
 const String kFontFamily = 'Inter';

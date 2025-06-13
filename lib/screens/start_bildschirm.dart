@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './rechner_bildschirm.dart';
 import '../config/app_constants.dart';
 
-class StartBildschirm extends StatefulWidget {
+class StartBildschirm extends ConsumerStatefulWidget {
   const StartBildschirm({super.key});
 
   @override
-  State<StartBildschirm> createState() => _StartBildschirmState();
+  ConsumerState<StartBildschirm> createState() => _StartBildschirmState();
 }
 
-class _StartBildschirmState extends State<StartBildschirm>
+class _StartBildschirmState extends ConsumerState<StartBildschirm>
     with SingleTickerProviderStateMixin {
   bool _skipNextTime = false;
-
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -38,7 +38,9 @@ class _StartBildschirmState extends State<StartBildschirm>
       ),
     );
     Timer(const Duration(milliseconds: 200), () {
-      if (mounted) _animationController.forward();
+      if (mounted) {
+        _animationController.forward();
+      }
     });
   }
 
@@ -50,7 +52,6 @@ class _StartBildschirmState extends State<StartBildschirm>
 
   Future<void> _navigateToRechner() async {
     final prefs = await SharedPreferences.getInstance();
-
     await prefs.setBool('skipSplash', _skipNextTime);
 
     if (mounted) {
@@ -64,7 +65,6 @@ class _StartBildschirmState extends State<StartBildschirm>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(kPaddingLarge),
@@ -77,9 +77,10 @@ class _StartBildschirmState extends State<StartBildschirm>
                     tag: 'appLogo',
                     child: Image.asset('assets/images/logo.png',
                         height: 80,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.agriculture,
-                                size: 80, color: kSeedColor)),
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.agriculture,
+                            size: 80,
+                            color: Theme.of(context).colorScheme.primary)),
                   ),
                   Image.asset('assets/images/fh_logo.png',
                       height: 60,
@@ -87,8 +88,6 @@ class _StartBildschirmState extends State<StartBildschirm>
                           const Icon(Icons.school, size: 60)),
                 ],
               ),
-
-              // Texte und Animationen
               Expanded(
                 child: Center(
                   child: SingleChildScrollView(
@@ -103,10 +102,7 @@ class _StartBildschirmState extends State<StartBildschirm>
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineMedium
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(height: kPaddingMedium),
@@ -135,8 +131,6 @@ class _StartBildschirmState extends State<StartBildschirm>
                   ),
                 ),
               ),
-
-              // Checkbox und Button
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: Column(
@@ -165,14 +159,6 @@ class _StartBildschirmState extends State<StartBildschirm>
                     const SizedBox(height: kPaddingSmall),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.arrow_forward_rounded),
-                      style: ElevatedButton.styleFrom(
-                        padding: kButtonPadding.add(const EdgeInsets.symmetric(
-                            vertical: kPaddingSmall / 2)),
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
                       onPressed: _navigateToRechner,
                       label: Text(l10n.startCalculatorButton),
                     ),

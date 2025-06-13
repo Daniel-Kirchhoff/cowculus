@@ -35,36 +35,19 @@ class ErgebnisTabelleWidget extends StatelessWidget {
       children: [
         Text(
           l10n.resultsTitle,
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: kPaddingMedium),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            columnSpacing: kDataTableColumnSpacing,
-            decoration: BoxDecoration(
-              border: Border.all(color: kDataTableBorderColor),
-              borderRadius: BorderRadius.circular(kAppBorderRadius),
-            ),
             columns: [
+              DataColumn(label: Text(l10n.columnHeaderParameter)),
+              DataColumn(label: Text(l10n.columnHeaderAktuell), numeric: true),
               DataColumn(
-                  label: Text(l10n.columnHeaderParameter,
-                      style: const TextStyle(fontWeight: FontWeight.bold))),
+                  label: Text(l10n.columnHeaderRealistisch), numeric: true),
               DataColumn(
-                  label: Text(l10n.columnHeaderAktuell,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  numeric: true),
-              DataColumn(
-                  label: Text(l10n.columnHeaderRealistisch,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  numeric: true),
-              DataColumn(
-                  label: Text(l10n.columnHeaderEmpfehlung,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
-                  numeric: true),
+                  label: Text(l10n.columnHeaderEmpfehlung), numeric: true),
             ],
             rows: [
               DataRow(cells: [
@@ -86,8 +69,8 @@ class ErgebnisTabelleWidget extends StatelessWidget {
                     empfehlungErgebnis?.faersenkaelberPlaetze))),
               ]),
               DataRow(
-                  color: MaterialStateProperty.resolveWith<Color?>(
-                      (states) => kTotalRowHighlightColor),
+                  color: MaterialStateProperty.resolveWith<Color?>((states) =>
+                      Theme.of(context).colorScheme.secondary.withOpacity(0.3)),
                   cells: [
                     DataCell(Text(l10n.rowLabelGesamtPlaetze,
                         style: const TextStyle(fontWeight: FontWeight.bold))),
@@ -107,10 +90,7 @@ class ErgebnisTabelleWidget extends StatelessWidget {
         const SizedBox(height: kPaddingSmall + 2),
         Text(
           l10n.hinweisTextTabelle,
-          style: TextStyle(
-              fontSize: kHintTextFontSize,
-              fontStyle: FontStyle.italic,
-              color: kHintTextColor),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
     );

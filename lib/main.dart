@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './screens/start_bildschirm.dart';
 import './screens/rechner_bildschirm.dart';
 import './config/app_theme.dart';
+import './providers/theme_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,16 +19,19 @@ Future<void> main() async {
   ));
 }
 
-class KaelberRechnerApp extends StatelessWidget {
+class KaelberRechnerApp extends ConsumerWidget {
   final bool skipSplash;
-
   const KaelberRechnerApp({super.key, required this.skipSplash});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -37,8 +41,8 @@ class KaelberRechnerApp extends StatelessWidget {
       supportedLocales: const [
         Locale('de'),
         Locale('en'),
+        Locale('pt'),
       ],
-      // Hier wird entschieden, welcher Bildschirm der Startbildschirm ist
       home: skipSplash ? const RechnerBildschirm() : const StartBildschirm(),
       debugShowCheckedModeBanner: false,
     );

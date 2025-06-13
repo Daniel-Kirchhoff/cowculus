@@ -7,6 +7,7 @@ import '../providers/rechner_providers.dart';
 import '../models/berechnungs_eingabe.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
 import '../config/app_constants.dart';
+import '../providers/theme_provider.dart';
 
 class RechnerBildschirm extends ConsumerStatefulWidget {
   const RechnerBildschirm({super.key});
@@ -62,12 +63,9 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState!.save();
-
       final aktuelleEingabe = ref.read(eingabeProvider);
       final berechnungsService = ref.read(berechnungsServiceProvider);
-
       final aktuellErgebnis = berechnungsService.berechne(aktuelleEingabe);
-
       final realistischEingabe = aktuelleEingabe.copyWith(
         zwischenkalbezeitTage: 401,
         haltedauerBullenkaelberTage: 28,
@@ -80,7 +78,6 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       );
       final realistischErgebnis =
           berechnungsService.berechne(realistischEingabe, reserveProzent: 25);
-
       final empfZKZ = aktuelleEingabe.zwischenkalbezeitTage > 410.0
           ? aktuelleEingabe.zwischenkalbezeitTage
           : 410.0;
@@ -91,13 +88,11 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         leerstandszeitTage: 7,
       );
       final empfehlungErgebnis = berechnungsService.berechne(empfehlungEingabe);
-
       final ergebnisse = (
         aktuell: aktuellErgebnis,
         realistisch: realistischErgebnis,
         empfehlung: empfehlungErgebnis
       );
-
       ref.read(ergebnisProvider.notifier).state = ergebnisse;
     }
   }
@@ -144,11 +139,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       required List<Widget> children}) {
     return ExpansionPanel(
       headerBuilder: (context, isExpanded) => ListTile(
-        title: Text(titel,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.w600)),
+        title: Text(titel, style: Theme.of(context).textTheme.titleMedium),
       ),
       body: Padding(
           padding: kPanelPaddingBody, child: Column(children: children)),
@@ -161,6 +152,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final ergebnisse = ref.watch(ergebnisProvider);
+    final themeMode = ref.watch(themeProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -175,8 +167,17 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
           const SizedBox(width: kPaddingSmall),
           Text(l10n.appBarTitle),
         ]),
-        centerTitle: true,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+            ),
+            onPressed: () {
+              ref.read(themeProvider.notifier).toggleTheme();
+            },
+            tooltip: 'Helligkeit wechseln',
+          ),
+        ],
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
@@ -189,17 +190,16 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
               children: <Widget>[
                 Text(
                   l10n.mainParameterFormTitle,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: kPaddingMedium),
                 ExpansionPanelList(
-                  expansionCallback: (index, isExpanded) =>
-                      setState(() => _isExpanded[index] = !_isExpanded[index]),
-                  elevation: 2,
-                  expandedHeaderPadding: EdgeInsets.zero,
+                  expansionCallback: (int index, bool isExpanded) {
+                    setState(() {
+                      _isExpanded[index] = !_isExpanded[index];
+                    });
+                  },
+                  elevation: 1,
                   children: [
                     _erstelleAusklappPanel(
                       titel: l10n.panelTitleTierzahlen,
@@ -305,12 +305,6 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                       icon: const Icon(Icons.calculate, size: kIconSizeDefault),
                       onPressed: _submitAndCalculate,
                       label: Text(l10n.buttonTextBerechnen),
-                      style: ElevatedButton.styleFrom(
-                        textStyle: Theme.of(context)
-                            .textTheme
-                            .labelLarge
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
                     ),
                   ),
                 ),
