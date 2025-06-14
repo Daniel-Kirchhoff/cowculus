@@ -16,9 +16,8 @@ const Color kDarkColorAccent = Color(0xFFC4A989);
 const Color kDarkColorFont1 = Color(0xFFFFFFFF);
 const Color kDarkColorFont2 = Color(0xFFB5B7C0);
 
-// === TEXT STILE & SCHRIFTARTEN ===
+// === SCHRIFTARTEN (gemeinsam) ===
 const String kFontFamily = 'Inter';
-const double kHintTextFontSize = 12.0;
 
 // === ABSTÄNDE & PADDING ===
 const double kPaddingSmall = 8.0;
@@ -31,11 +30,12 @@ const EdgeInsets kPanelPaddingBody =
 const EdgeInsets kScreenPaddingSmall = EdgeInsets.all(12.0);
 const EdgeInsets kScreenPaddingLarge = EdgeInsets.all(24.0);
 
-// === BORDER RADII ===
+// === RADII & GRÖSSEN ===
 const double kAppBorderRadius = 8.0;
-
-// === UI DIMENSIONEN / BREAKPOINTS ===
-const double kSmallScreenBreakpoint = 600.0;
-const double kDataTableColumnSpacing = 20.0;
 const Size kElevatedButtonMinimumSize = Size(200, 50);
 const double kIconSizeDefault = 24.0;
+
+// === BREAKPOINTS & LAYOUT ===
+const double kSmallScreenBreakpoint = 600.0;
+const double kDesktopBreakpoint = 1024.0;
+const double kDataTableColumnSpacing = 20.0;

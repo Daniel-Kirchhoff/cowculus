@@ -148,11 +148,151 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     );
   }
 
+  Widget _buildInputColumn(AppLocalizations l10n) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            l10n.mainParameterFormTitle,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: kPaddingMedium),
+          ExpansionPanelList(
+            expansionCallback: (int index, bool isExpanded) {
+              setState(() {
+                _isExpanded[index] = !_isExpanded[index];
+              });
+            },
+            elevation: 1,
+            children: [
+              _erstelleAusklappPanel(
+                titel: l10n.panelTitleTierzahlen,
+                isExpanded: _isExpanded[0],
+                children: [
+                  _erstelleTextFeld(
+                      context,
+                      'anzahlMilchkuehe',
+                      l10n.textFormFieldLabelAnzahlMilchkuehe,
+                      l10n.einheitStueck,
+                      erlaubeDezimal: false),
+                  _erstelleTextFeld(context, 'anzahlFaersenZurAbkalbung',
+                      l10n.textFormFieldLabelAnzahlFaersen, l10n.einheitStueck,
+                      erlaubeDezimal: false),
+                ],
+              ),
+              _erstelleAusklappPanel(
+                titel: l10n.panelTitleGeschlecht,
+                isExpanded: _isExpanded[1],
+                children: [
+                  _erstelleTextFeld(
+                      context,
+                      'anteilMaennlicherKaelberProzent',
+                      l10n.textFormFieldLabelAnteilMaennlKaelber,
+                      l10n.einheitProzent,
+                      istProzent: true),
+                ],
+              ),
+              _erstelleAusklappPanel(
+                titel: l10n.panelTitleZeit,
+                isExpanded: _isExpanded[2],
+                children: [
+                  _erstelleTextFeld(
+                      context,
+                      'zwischenkalbezeitTage',
+                      l10n.textFormFieldLabelZwischenkalbezeit,
+                      l10n.einheitTage),
+                  _erstelleTextFeld(
+                      context,
+                      'haltedauerBullenkaelberTage',
+                      l10n.textFormFieldLabelHaltedauerBullen,
+                      l10n.einheitTage),
+                  _erstelleTextFeld(
+                      context,
+                      'haltedauerFaersenkaelberTage',
+                      l10n.textFormFieldLabelHaltedauerFaersen,
+                      l10n.einheitTage),
+                  _erstelleTextFeld(context, 'leerstandszeitTage',
+                      l10n.textFormFieldLabelLeerstandszeit, l10n.einheitTage),
+                ],
+              ),
+              _erstelleAusklappPanel(
+                titel: l10n.panelTitleReproduktion,
+                isExpanded: _isExpanded[3],
+                children: [
+                  _erstelleTextFeld(context, 'abkalberateProzent',
+                      l10n.textFormFieldLabelAbkalberate, l10n.einheitProzent,
+                      istProzent: true),
+                  _erstelleTextFeld(
+                      context,
+                      'fruehmortalitaetProzent',
+                      l10n.textFormFieldLabelFruehmortalitaet,
+                      l10n.einheitProzent,
+                      istProzent: true),
+                  _erstelleTextFeld(
+                      context,
+                      'totgeburtenrateProzent',
+                      l10n.textFormFieldLabelTotgeburtenrate,
+                      l10n.einheitProzent,
+                      istProzent: true),
+                  _erstelleTextFeld(
+                      context,
+                      'anteilZwillingstraechtigkeitenProzent',
+                      l10n.textFormFieldLabelZwillingstraechtigkeiten,
+                      l10n.einheitProzent,
+                      istProzent: true),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: kPaddingLarge),
+          Center(
+            child: KeyboardListener(
+              focusNode: _buttonFocusNode,
+              onKeyEvent: (KeyEvent event) {
+                if (event is KeyDownEvent &&
+                    (event.logicalKey == LogicalKeyboardKey.enter ||
+                        event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
+                  _submitAndCalculate();
+                }
+              },
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.calculate, size: kIconSizeDefault),
+                onPressed: _submitAndCalculate,
+                label: Text(l10n.buttonTextBerechnen),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultsColumn() {
+    final ergebnisse = ref.watch(ergebnisProvider);
+    if (ergebnisse == null) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(kPaddingLarge),
+          child: Text('Ergebnisse werden hier angezeigt.'),
+        ),
+      );
+    }
+    return ErgebnisTabelleWidget(
+      aktuellErgebnis: ergebnisse.aktuell,
+      realistischErgebnis: ergebnisse.realistisch,
+      empfehlungErgebnis: ergebnisse.empfehlung,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final ergebnisse = ref.watch(ergebnisProvider);
     final themeMode = ref.watch(themeProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final bool isDesktop = screenWidth >= kDesktopBreakpoint;
 
     return Scaffold(
       appBar: AppBar(
@@ -169,9 +309,9 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         ]),
         actions: [
           IconButton(
-            icon: Icon(
-              themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
-            ),
+            icon: Icon(themeMode == ThemeMode.dark
+                ? Icons.light_mode
+                : Icons.dark_mode),
             onPressed: () {
               ref.read(themeProvider.notifier).toggleTheme();
             },
@@ -181,144 +321,43 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(kPaddingLarge),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(
-                  l10n.mainParameterFormTitle,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: kPaddingMedium),
-                ExpansionPanelList(
-                  expansionCallback: (int index, bool isExpanded) {
-                    setState(() {
-                      _isExpanded[index] = !_isExpanded[index];
-                    });
-                  },
-                  elevation: 1,
-                  children: [
-                    _erstelleAusklappPanel(
-                      titel: l10n.panelTitleTierzahlen,
-                      isExpanded: _isExpanded[0],
-                      children: [
-                        _erstelleTextFeld(
-                            context,
-                            'anzahlMilchkuehe',
-                            l10n.textFormFieldLabelAnzahlMilchkuehe,
-                            l10n.einheitStueck,
-                            erlaubeDezimal: false),
-                        _erstelleTextFeld(
-                            context,
-                            'anzahlFaersenZurAbkalbung',
-                            l10n.textFormFieldLabelAnzahlFaersen,
-                            l10n.einheitStueck,
-                            erlaubeDezimal: false),
-                      ],
-                    ),
-                    _erstelleAusklappPanel(
-                      titel: l10n.panelTitleGeschlecht,
-                      isExpanded: _isExpanded[1],
-                      children: [
-                        _erstelleTextFeld(
-                            context,
-                            'anteilMaennlicherKaelberProzent',
-                            l10n.textFormFieldLabelAnteilMaennlKaelber,
-                            l10n.einheitProzent,
-                            istProzent: true),
-                      ],
-                    ),
-                    _erstelleAusklappPanel(
-                      titel: l10n.panelTitleZeit,
-                      isExpanded: _isExpanded[2],
-                      children: [
-                        _erstelleTextFeld(
-                            context,
-                            'zwischenkalbezeitTage',
-                            l10n.textFormFieldLabelZwischenkalbezeit,
-                            l10n.einheitTage),
-                        _erstelleTextFeld(
-                            context,
-                            'haltedauerBullenkaelberTage',
-                            l10n.textFormFieldLabelHaltedauerBullen,
-                            l10n.einheitTage),
-                        _erstelleTextFeld(
-                            context,
-                            'haltedauerFaersenkaelberTage',
-                            l10n.textFormFieldLabelHaltedauerFaersen,
-                            l10n.einheitTage),
-                        _erstelleTextFeld(
-                            context,
-                            'leerstandszeitTage',
-                            l10n.textFormFieldLabelLeerstandszeit,
-                            l10n.einheitTage),
-                      ],
-                    ),
-                    _erstelleAusklappPanel(
-                      titel: l10n.panelTitleReproduktion,
-                      isExpanded: _isExpanded[3],
-                      children: [
-                        _erstelleTextFeld(
-                            context,
-                            'abkalberateProzent',
-                            l10n.textFormFieldLabelAbkalberate,
-                            l10n.einheitProzent,
-                            istProzent: true),
-                        _erstelleTextFeld(
-                            context,
-                            'fruehmortalitaetProzent',
-                            l10n.textFormFieldLabelFruehmortalitaet,
-                            l10n.einheitProzent,
-                            istProzent: true),
-                        _erstelleTextFeld(
-                            context,
-                            'totgeburtenrateProzent',
-                            l10n.textFormFieldLabelTotgeburtenrate,
-                            l10n.einheitProzent,
-                            istProzent: true),
-                        _erstelleTextFeld(
-                            context,
-                            'anteilZwillingstraechtigkeitenProzent',
-                            l10n.textFormFieldLabelZwillingstraechtigkeiten,
-                            l10n.einheitProzent,
-                            istProzent: true),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: kPaddingLarge),
-                Center(
-                  child: KeyboardListener(
-                    focusNode: _buttonFocusNode,
-                    onKeyEvent: (KeyEvent event) {
-                      if (event is KeyDownEvent &&
-                          (event.logicalKey == LogicalKeyboardKey.enter ||
-                              event.logicalKey ==
-                                  LogicalKeyboardKey.numpadEnter)) {
-                        _submitAndCalculate();
-                      }
-                    },
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.calculate, size: kIconSizeDefault),
-                      onPressed: _submitAndCalculate,
-                      label: Text(l10n.buttonTextBerechnen),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: kPaddingLarge),
-                if (ergebnisse != null)
-                  ErgebnisTabelleWidget(
-                    aktuellErgebnis: ergebnisse.aktuell,
-                    realistischErgebnis: ergebnisse.realistisch,
-                    empfehlungErgebnis: ergebnisse.empfehlung,
-                  ),
-              ],
-            ),
+        child: isDesktop ? _buildDesktopLayout(l10n) : _buildMobileLayout(l10n),
+      ),
+    );
+  }
+
+  Widget _buildDesktopLayout(AppLocalizations l10n) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 2,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(kPaddingLarge),
+            child: _buildInputColumn(l10n),
           ),
         ),
+        const VerticalDivider(width: 1),
+        Expanded(
+          flex: 3,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(kPaddingLarge),
+            child: _buildResultsColumn(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileLayout(AppLocalizations l10n) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(kPaddingLarge),
+      child: Column(
+        children: [
+          _buildInputColumn(l10n),
+          const SizedBox(height: kPaddingLarge),
+          _buildResultsColumn(),
+        ],
       ),
     );
   }
