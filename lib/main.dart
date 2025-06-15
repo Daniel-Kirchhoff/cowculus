@@ -8,6 +8,7 @@ import './screens/start_bildschirm.dart';
 import './screens/rechner_bildschirm.dart';
 import './config/app_theme.dart';
 import './providers/theme_provider.dart';
+import './providers/locale_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,12 +27,14 @@ class KaelberRechnerApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final selectedLocale = ref.watch(localeProvider);
 
     return MaterialApp(
       onGenerateTitle: (context) => AppLocalizations.of(context)!.appTitle,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
+      locale: selectedLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -41,7 +44,6 @@ class KaelberRechnerApp extends ConsumerWidget {
       supportedLocales: const [
         Locale('de'),
         Locale('en'),
-        Locale('pt'),
       ],
       home: skipSplash ? const RechnerBildschirm() : const StartBildschirm(),
       debugShowCheckedModeBanner: false,

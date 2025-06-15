@@ -7,6 +7,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get systemLanguage => 'System Language';
+
+  @override
   String get appTitle => 'cowculus';
 
   @override

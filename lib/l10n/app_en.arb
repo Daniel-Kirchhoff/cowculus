@@ -1,5 +1,6 @@
 {
   "@@locale": "en",
+  "systemLanguage": "System Language",
   "appTitle": "cowculus",
   "appBarTitle": "AppBarTitle Placeholder",
   "calculatorTitle": "Calf Pen Calculator",

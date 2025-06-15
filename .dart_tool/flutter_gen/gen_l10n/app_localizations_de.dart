@@ -7,6 +7,9 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get systemLanguage => 'Systemsprache';
+
+  @override
   String get appTitle => 'cowculus';
 
   @override

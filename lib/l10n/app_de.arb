@@ -1,5 +1,6 @@
 {
   "@@locale": "de",
+  "systemLanguage": "Systemsprache",
   "appTitle": "cowculus",
   "appBarTitle": "AppBarTitle Placeholder",
   "calculatorTitle": "Kälberplatz Kalkulator",
