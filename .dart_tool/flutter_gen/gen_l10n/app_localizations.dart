@@ -95,6 +95,12 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
+  /// No description provided for @systemLanguage.
+  ///
+  /// In de, this message translates to:
+  /// **'Systemsprache'**
+  String get systemLanguage;
+
   /// No description provided for @appTitle.
   ///
   /// In de, this message translates to:
