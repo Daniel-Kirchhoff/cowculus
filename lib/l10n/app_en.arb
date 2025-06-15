@@ -41,5 +41,17 @@
   "textFormFieldLabelAbkalberate": "Calving Rate",
   "textFormFieldLabelFruehmortalitaet": "Early Mortality (calves up to 28 days)",
   "textFormFieldLabelTotgeburtenrate": "Stillbirth Rate (optional)",
-  "textFormFieldLabelZwillingstraechtigkeiten": "Twin Pregnancy Rate"
+  "textFormFieldLabelZwillingstraechtigkeiten": "Twin Pregnancy Rate",
+  "tooltipAnzahlMilchkuehe": "Enter the average number of lactating cows in your herd.",
+  "tooltipAnzahlFaersen": "Enter the number of heifers expected to calve for the first time in the coming year.",
+  "tooltipAnteilMaennlKaelber": "The percentage of born calves that are male. Usually around 50%.",
+  "tooltipZwischenkalbezeit": "The average number of days between two consecutive calvings of a cow.",
+  "tooltipHaltedauerBullen": "The average number of days a bull calf remains in a single hutch or calf box after birth.",
+  "tooltipHaltedauerFaersen": "The average number of days a heifer calf remains in a single hutch or calf box after birth.",
+  "tooltipLeerstandszeit": "The number of days a box or hutch remains empty after a calf is moved out before it is reoccupied (for cleaning and disinfection).",
+  "tooltipAbkalberate": "The percentage of cows and heifers intended for calving that actually calve per year.",
+  "tooltipFruehmortalitaet": "The percentage of calves that die within the first 28 days of life.",
+  "tooltipTotgeburtenrate": "Optional: The percentage of calves that are stillborn or die within the first 24 hours.",
+  "tooltipZwillingstraechtigkeiten": "The percentage of pregnancies that result in twin births.",
+  "resultsPlaceholder": "Enter your data and click 'Calculate' to display the results here."
 }

@@ -131,4 +131,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get textFormFieldLabelZwillingstraechtigkeiten => 'Twin Pregnancy Rate';
+
+  @override
+  String get tooltipAnzahlMilchkuehe => 'Enter the average number of lactating cows in your herd.';
+
+  @override
+  String get tooltipAnzahlFaersen => 'Enter the number of heifers expected to calve for the first time in the coming year.';
+
+  @override
+  String get tooltipAnteilMaennlKaelber => 'The percentage of born calves that are male. Usually around 50%.';
+
+  @override
+  String get tooltipZwischenkalbezeit => 'The average number of days between two consecutive calvings of a cow.';
+
+  @override
+  String get tooltipHaltedauerBullen => 'The average number of days a bull calf remains in a single hutch or calf box after birth.';
+
+  @override
+  String get tooltipHaltedauerFaersen => 'The average number of days a heifer calf remains in a single hutch or calf box after birth.';
+
+  @override
+  String get tooltipLeerstandszeit => 'The number of days a box or hutch remains empty after a calf is moved out before it is reoccupied (for cleaning and disinfection).';
+
+  @override
+  String get tooltipAbkalberate => 'The percentage of cows and heifers intended for calving that actually calve per year.';
+
+  @override
+  String get tooltipFruehmortalitaet => 'The percentage of calves that die within the first 28 days of life.';
+
+  @override
+  String get tooltipTotgeburtenrate => 'Optional: The percentage of calves that are stillborn or die within the first 24 hours.';
+
+  @override
+  String get tooltipZwillingstraechtigkeiten => 'The percentage of pregnancies that result in twin births.';
+
+  @override
+  String get resultsPlaceholder => 'Enter your data and click \'Calculate\' to display the results here.';
 }

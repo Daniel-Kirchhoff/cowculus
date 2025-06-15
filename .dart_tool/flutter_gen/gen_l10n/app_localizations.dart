@@ -346,6 +346,78 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anteil Zwillingsträchtigkeiten'**
   String get textFormFieldLabelZwillingstraechtigkeiten;
+
+  /// No description provided for @tooltipAnzahlMilchkuehe.
+  ///
+  /// In de, this message translates to:
+  /// **'Geben Sie die durchschnittliche Anzahl der laktierenden Kühe in Ihrer Herde an.'**
+  String get tooltipAnzahlMilchkuehe;
+
+  /// No description provided for @tooltipAnzahlFaersen.
+  ///
+  /// In de, this message translates to:
+  /// **'Geben Sie die Anzahl der Färsen an, die voraussichtlich im kommenden Jahr zum ersten Mal kalben werden.'**
+  String get tooltipAnzahlFaersen;
+
+  /// No description provided for @tooltipAnteilMaennlKaelber.
+  ///
+  /// In de, this message translates to:
+  /// **'Der prozentuale Anteil der geborenen Kälber, die männlich sind. Üblicherweise um die 50%.'**
+  String get tooltipAnteilMaennlKaelber;
+
+  /// No description provided for @tooltipZwischenkalbezeit.
+  ///
+  /// In de, this message translates to:
+  /// **'Die durchschnittliche Anzahl der Tage zwischen zwei aufeinanderfolgenden Kalbungen einer Kuh.'**
+  String get tooltipZwischenkalbezeit;
+
+  /// No description provided for @tooltipHaltedauerBullen.
+  ///
+  /// In de, this message translates to:
+  /// **'Die durchschnittliche Anzahl der Tage, die ein Bullenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.'**
+  String get tooltipHaltedauerBullen;
+
+  /// No description provided for @tooltipHaltedauerFaersen.
+  ///
+  /// In de, this message translates to:
+  /// **'Die durchschnittliche Anzahl der Tage, die ein Färsenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.'**
+  String get tooltipHaltedauerFaersen;
+
+  /// No description provided for @tooltipLeerstandszeit.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anzahl der Tage, die eine Box oder ein Iglu nach dem Ausstallen eines Kalbes leer steht, bevor es neu belegt wird (für Reinigung und Desinfektion).'**
+  String get tooltipLeerstandszeit;
+
+  /// No description provided for @tooltipAbkalberate.
+  ///
+  /// In de, this message translates to:
+  /// **'Der prozentuale Anteil der Kühe und zur Abkalbung vorgesehenen Färsen, die pro Jahr tatsächlich kalben.'**
+  String get tooltipAbkalberate;
+
+  /// No description provided for @tooltipFruehmortalitaet.
+  ///
+  /// In de, this message translates to:
+  /// **'Der prozentuale Anteil der Kälber, die in den ersten 28 Lebenstagen verenden.'**
+  String get tooltipFruehmortalitaet;
+
+  /// No description provided for @tooltipTotgeburtenrate.
+  ///
+  /// In de, this message translates to:
+  /// **'Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.'**
+  String get tooltipTotgeburtenrate;
+
+  /// No description provided for @tooltipZwillingstraechtigkeiten.
+  ///
+  /// In de, this message translates to:
+  /// **'Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.'**
+  String get tooltipZwillingstraechtigkeiten;
+
+  /// No description provided for @resultsPlaceholder.
+  ///
+  /// In de, this message translates to:
+  /// **'Geben Sie Ihre Daten ein und klicken Sie auf \'Berechnen\', um die Ergebnisse hier anzuzeigen.'**
+  String get resultsPlaceholder;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

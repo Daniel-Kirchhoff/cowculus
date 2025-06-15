@@ -98,37 +98,66 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   }
 
   Widget _erstelleTextFeld(BuildContext context, String schluessel,
-      String bezeichnung, String einheit,
+      String bezeichnung, String tooltipText, String einheit,
       {bool istProzent = false, bool erlaubeDezimal = true}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
-      child: TextFormField(
-        controller: _controllers[schluessel],
-        decoration: InputDecoration(
-          labelText: bezeichnung,
-          hintText: AppLocalizations.of(context)!.textFieldHint,
-          suffixText: einheit,
-        ),
-        keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(
-              RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(bezeichnung,
+                  style: Theme.of(context).inputDecorationTheme.labelStyle),
+              const SizedBox(width: kPaddingSmall / 2),
+              Tooltip(
+                message: tooltipText,
+                padding: const EdgeInsets.all(kPaddingSmall),
+                textStyle:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(kAppBorderRadius / 2),
+                ),
+                child: Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: kPaddingSmall / 2),
+          TextFormField(
+            controller: _controllers[schluessel],
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.textFieldHint,
+              suffixText: einheit,
+            ),
+            keyboardType:
+                TextInputType.numberWithOptions(decimal: erlaubeDezimal),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
+            ],
+            onFieldSubmitted: (_) => _submitAndCalculate(),
+            validator: (wert) {
+              final l10n = AppLocalizations.of(context)!;
+              if (wert == null || wert.isEmpty)
+                return l10n.validatorMsgBitteWertEingeben;
+              if (double.tryParse(wert) == null)
+                return l10n.validatorMsgUngueltigeZahl;
+              if (double.parse(wert) < 0)
+                return l10n.validatorMsgWertMussPositivSein;
+              return null;
+            },
+            onSaved: (wert) {
+              final val = double.tryParse(wert ?? "0") ?? 0;
+              ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
+            },
+          ),
         ],
-        onFieldSubmitted: (_) => _submitAndCalculate(),
-        validator: (wert) {
-          final l10n = AppLocalizations.of(context)!;
-          if (wert == null || wert.isEmpty)
-            return l10n.validatorMsgBitteWertEingeben;
-          if (double.tryParse(wert) == null)
-            return l10n.validatorMsgUngueltigeZahl;
-          if (double.parse(wert) < 0)
-            return l10n.validatorMsgWertMussPositivSein;
-          return null;
-        },
-        onSaved: (wert) {
-          final val = double.tryParse(wert ?? "0") ?? 0;
-          ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
-        },
       ),
     );
   }
@@ -175,10 +204,15 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                       context,
                       'anzahlMilchkuehe',
                       l10n.textFormFieldLabelAnzahlMilchkuehe,
+                      l10n.tooltipAnzahlMilchkuehe,
                       l10n.einheitStueck,
                       erlaubeDezimal: false),
-                  _erstelleTextFeld(context, 'anzahlFaersenZurAbkalbung',
-                      l10n.textFormFieldLabelAnzahlFaersen, l10n.einheitStueck,
+                  _erstelleTextFeld(
+                      context,
+                      'anzahlFaersenZurAbkalbung',
+                      l10n.textFormFieldLabelAnzahlFaersen,
+                      l10n.tooltipAnzahlFaersen,
+                      l10n.einheitStueck,
                       erlaubeDezimal: false),
                 ],
               ),
@@ -190,6 +224,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                       context,
                       'anteilMaennlicherKaelberProzent',
                       l10n.textFormFieldLabelAnteilMaennlKaelber,
+                      l10n.tooltipAnteilMaennlKaelber,
                       l10n.einheitProzent,
                       istProzent: true),
                 ],
@@ -202,44 +237,58 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                       context,
                       'zwischenkalbezeitTage',
                       l10n.textFormFieldLabelZwischenkalbezeit,
+                      l10n.tooltipZwischenkalbezeit,
                       l10n.einheitTage),
                   _erstelleTextFeld(
                       context,
                       'haltedauerBullenkaelberTage',
                       l10n.textFormFieldLabelHaltedauerBullen,
+                      l10n.tooltipHaltedauerBullen,
                       l10n.einheitTage),
                   _erstelleTextFeld(
                       context,
                       'haltedauerFaersenkaelberTage',
                       l10n.textFormFieldLabelHaltedauerFaersen,
+                      l10n.tooltipHaltedauerFaersen,
                       l10n.einheitTage),
-                  _erstelleTextFeld(context, 'leerstandszeitTage',
-                      l10n.textFormFieldLabelLeerstandszeit, l10n.einheitTage),
+                  _erstelleTextFeld(
+                      context,
+                      'leerstandszeitTage',
+                      l10n.textFormFieldLabelLeerstandszeit,
+                      l10n.tooltipLeerstandszeit,
+                      l10n.einheitTage),
                 ],
               ),
               _erstelleAusklappPanel(
                 titel: l10n.panelTitleReproduktion,
                 isExpanded: _isExpanded[3],
                 children: [
-                  _erstelleTextFeld(context, 'abkalberateProzent',
-                      l10n.textFormFieldLabelAbkalberate, l10n.einheitProzent,
+                  _erstelleTextFeld(
+                      context,
+                      'abkalberateProzent',
+                      l10n.textFormFieldLabelAbkalberate,
+                      l10n.tooltipAbkalberate,
+                      l10n.einheitProzent,
                       istProzent: true),
                   _erstelleTextFeld(
                       context,
                       'fruehmortalitaetProzent',
                       l10n.textFormFieldLabelFruehmortalitaet,
+                      l10n.tooltipFruehmortalitaet,
                       l10n.einheitProzent,
                       istProzent: true),
                   _erstelleTextFeld(
                       context,
                       'totgeburtenrateProzent',
                       l10n.textFormFieldLabelTotgeburtenrate,
+                      l10n.tooltipTotgeburtenrate,
                       l10n.einheitProzent,
                       istProzent: true),
                   _erstelleTextFeld(
                       context,
                       'anteilZwillingstraechtigkeitenProzent',
                       l10n.textFormFieldLabelZwillingstraechtigkeiten,
+                      l10n.tooltipZwillingstraechtigkeiten,
                       l10n.einheitProzent,
                       istProzent: true),
                 ],
@@ -272,10 +321,13 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   Widget _buildResultsColumn() {
     final ergebnisse = ref.watch(ergebnisProvider);
     if (ergebnisse == null) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(kPaddingLarge),
-          child: Text('Ergebnisse werden hier angezeigt.'),
+          padding: const EdgeInsets.all(kPaddingLarge),
+          child: Text(
+            AppLocalizations.of(context)!.resultsPlaceholder,
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -291,7 +343,6 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     final l10n = AppLocalizations.of(context)!;
     final themeMode = ref.watch(themeProvider);
     final screenWidth = MediaQuery.of(context).size.width;
-
     final bool isDesktop = screenWidth >= kDesktopBreakpoint;
 
     return Scaffold(

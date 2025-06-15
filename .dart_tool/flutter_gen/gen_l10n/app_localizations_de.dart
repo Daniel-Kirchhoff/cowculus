@@ -131,4 +131,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get textFormFieldLabelZwillingstraechtigkeiten => 'Anteil Zwillingsträchtigkeiten';
+
+  @override
+  String get tooltipAnzahlMilchkuehe => 'Geben Sie die durchschnittliche Anzahl der laktierenden Kühe in Ihrer Herde an.';
+
+  @override
+  String get tooltipAnzahlFaersen => 'Geben Sie die Anzahl der Färsen an, die voraussichtlich im kommenden Jahr zum ersten Mal kalben werden.';
+
+  @override
+  String get tooltipAnteilMaennlKaelber => 'Der prozentuale Anteil der geborenen Kälber, die männlich sind. Üblicherweise um die 50%.';
+
+  @override
+  String get tooltipZwischenkalbezeit => 'Die durchschnittliche Anzahl der Tage zwischen zwei aufeinanderfolgenden Kalbungen einer Kuh.';
+
+  @override
+  String get tooltipHaltedauerBullen => 'Die durchschnittliche Anzahl der Tage, die ein Bullenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.';
+
+  @override
+  String get tooltipHaltedauerFaersen => 'Die durchschnittliche Anzahl der Tage, die ein Färsenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.';
+
+  @override
+  String get tooltipLeerstandszeit => 'Die Anzahl der Tage, die eine Box oder ein Iglu nach dem Ausstallen eines Kalbes leer steht, bevor es neu belegt wird (für Reinigung und Desinfektion).';
+
+  @override
+  String get tooltipAbkalberate => 'Der prozentuale Anteil der Kühe und zur Abkalbung vorgesehenen Färsen, die pro Jahr tatsächlich kalben.';
+
+  @override
+  String get tooltipFruehmortalitaet => 'Der prozentuale Anteil der Kälber, die in den ersten 28 Lebenstagen verenden.';
+
+  @override
+  String get tooltipTotgeburtenrate => 'Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.';
+
+  @override
+  String get tooltipZwillingstraechtigkeiten => 'Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.';
+
+  @override
+  String get resultsPlaceholder => 'Geben Sie Ihre Daten ein und klicken Sie auf \'Berechnen\', um die Ergebnisse hier anzuzeigen.';
 }

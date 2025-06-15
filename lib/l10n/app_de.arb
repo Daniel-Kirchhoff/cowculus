@@ -50,5 +50,17 @@
   "textFormFieldLabelAbkalberate": "Abkalberate",
   "textFormFieldLabelFruehmortalitaet": "Frühmortalität (Kälber bis 28 Tage)",
   "textFormFieldLabelTotgeburtenrate": "Totgeburtenrate (optional)",
-  "textFormFieldLabelZwillingstraechtigkeiten": "Anteil Zwillingsträchtigkeiten"
+  "textFormFieldLabelZwillingstraechtigkeiten": "Anteil Zwillingsträchtigkeiten",
+  "tooltipAnzahlMilchkuehe": "Geben Sie die durchschnittliche Anzahl der laktierenden Kühe in Ihrer Herde an.",
+  "tooltipAnzahlFaersen": "Geben Sie die Anzahl der Färsen an, die voraussichtlich im kommenden Jahr zum ersten Mal kalben werden.",
+  "tooltipAnteilMaennlKaelber": "Der prozentuale Anteil der geborenen Kälber, die männlich sind. Üblicherweise um die 50%.",
+  "tooltipZwischenkalbezeit": "Die durchschnittliche Anzahl der Tage zwischen zwei aufeinanderfolgenden Kalbungen einer Kuh.",
+  "tooltipHaltedauerBullen": "Die durchschnittliche Anzahl der Tage, die ein Bullenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.",
+  "tooltipHaltedauerFaersen": "Die durchschnittliche Anzahl der Tage, die ein Färsenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.",
+  "tooltipLeerstandszeit": "Die Anzahl der Tage, die eine Box oder ein Iglu nach dem Ausstallen eines Kalbes leer steht, bevor es neu belegt wird (für Reinigung und Desinfektion).",
+  "tooltipAbkalberate": "Der prozentuale Anteil der Kühe und zur Abkalbung vorgesehenen Färsen, die pro Jahr tatsächlich kalben.",
+  "tooltipFruehmortalitaet": "Der prozentuale Anteil der Kälber, die in den ersten 28 Lebenstagen verenden.",
+  "tooltipTotgeburtenrate": "Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.",
+  "tooltipZwillingstraechtigkeiten": "Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.",
+  "resultsPlaceholder": "Geben Sie Ihre Daten ein und klicken Sie auf 'Berechnen', um die Ergebnisse hier anzuzeigen."
 }
