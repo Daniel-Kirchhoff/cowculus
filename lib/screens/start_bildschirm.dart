@@ -75,14 +75,14 @@ class _StartBildschirmState extends ConsumerState<StartBildschirm>
                 children: [
                   Hero(
                     tag: 'appLogo',
-                    child: Image.asset('assets/images/logo.png',
+                    child: Image.asset('lib/assets/images/logo.png',
                         height: 80,
                         errorBuilder: (context, error, stackTrace) => Icon(
                             Icons.agriculture,
                             size: 80,
                             color: Theme.of(context).colorScheme.primary)),
                   ),
-                  Image.asset('assets/images/fh_logo.png',
+                  Image.asset('lib/assets/images/fh_logo.png',
                       height: 60,
                       errorBuilder: (context, error, stackTrace) =>
                           const Icon(Icons.school, size: 60)),
