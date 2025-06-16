@@ -63,5 +63,6 @@
   "tooltipFruehmortalitaet": "Der prozentuale Anteil der Kälber, die in den ersten 28 Lebenstagen verenden.",
   "tooltipTotgeburtenrate": "Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.",
   "tooltipZwillingstraechtigkeiten": "Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.",
-  "resultsPlaceholder": "Geben Sie Ihre Daten ein und klicken Sie auf 'Berechnen', um die Ergebnisse hier anzuzeigen."
+  "resultsPlaceholder": "Geben Sie Ihre Daten ein und klicken Sie auf 'Berechnen', um die Ergebnisse hier anzuzeigen.",
+  "chartTitle": "Grafische Auswertung"
 }

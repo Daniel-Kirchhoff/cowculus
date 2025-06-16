@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/rechner_providers.dart';
 import '../models/berechnungs_eingabe.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
+import '../widgets/ergebnis_chart_widget.dart';
 import '../config/app_constants.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
@@ -92,7 +93,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       final ergebnisse = (
         aktuell: aktuellErgebnis,
         realistisch: realistischErgebnis,
-        empfehlung: empfehlungErgebnis
+        empfehlung: empfehlungErgebnis,
       );
       ref.read(ergebnisProvider.notifier).state = ergebnisse;
     }
@@ -100,73 +101,101 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
 
   Widget _erstelleTextFeld(BuildContext context, String schluessel,
       String bezeichnung, String tooltipText, String einheit,
-      {bool istProzent = false, bool erlaubeDezimal = true}) {
+      {bool istProzent = false,
+      bool erlaubeDezimal = true,
+      bool istHeader = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Text(bezeichnung,
-                  style: Theme.of(context).inputDecorationTheme.labelStyle),
-              const SizedBox(width: kPaddingSmall / 2),
-              Tooltip(
-                message: tooltipText,
-                padding: const EdgeInsets.all(kPaddingSmall),
-                textStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(kAppBorderRadius / 2),
-                ),
-                child: Icon(
-                  Icons.info_outline,
-                  size: 16,
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                ),
+          if (istHeader)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              color: Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withOpacity(0.1), // z.B. leichter Blauton
+              child: Text(
+                bezeichnung,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
-            ],
-          ),
-          const SizedBox(height: kPaddingSmall / 2),
-          TextFormField(
-            controller: _controllers[schluessel],
-            decoration: InputDecoration(
-              hintText: AppLocalizations.of(context)!.textFieldHint,
-              suffixText: einheit,
+            )
+          else
+            Row(
+              children: [
+                Text(
+                  bezeichnung,
+                  style: Theme.of(context).inputDecorationTheme.labelStyle,
+                ),
+                const SizedBox(width: kPaddingSmall / 2),
+                Tooltip(
+                  message: tooltipText,
+                  padding: const EdgeInsets.all(kPaddingSmall),
+                  textStyle:
+                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                  decoration: BoxDecoration(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(kAppBorderRadius / 2),
+                  ),
+                  child: Icon(
+                    Icons.info_outline,
+                    size: 16,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.6),
+                  ),
+                ),
+              ],
             ),
-            keyboardType:
-                TextInputType.numberWithOptions(decimal: erlaubeDezimal),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                  RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
-            ],
-            onFieldSubmitted: (_) => _submitAndCalculate(),
-            validator: (wert) {
-              final l10n = AppLocalizations.of(context)!;
-              if (wert == null || wert.isEmpty)
-                return l10n.validatorMsgBitteWertEingeben;
-              if (double.tryParse(wert) == null)
-                return l10n.validatorMsgUngueltigeZahl;
-              if (double.parse(wert) < 0)
-                return l10n.validatorMsgWertMussPositivSein;
-              return null;
-            },
-            onSaved: (wert) {
-              final val = double.tryParse(wert ?? "0") ?? 0;
-              ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
-            },
-          ),
+          if (!istHeader) const SizedBox(height: kPaddingSmall / 2),
+          if (!istHeader)
+            TextFormField(
+              controller: _controllers[schluessel],
+              decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.textFieldHint,
+                suffixText: einheit,
+              ),
+              keyboardType:
+                  TextInputType.numberWithOptions(decimal: erlaubeDezimal),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                    RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
+              ],
+              onFieldSubmitted: (_) => _submitAndCalculate(),
+              validator: (wert) {
+                final l10n = AppLocalizations.of(context)!;
+                if (wert == null || wert.isEmpty) {
+                  return l10n.validatorMsgBitteWertEingeben;
+                }
+                if (double.tryParse(wert) == null) {
+                  return l10n.validatorMsgUngueltigeZahl;
+                }
+                if (double.parse(wert) < 0) {
+                  return l10n.validatorMsgWertMussPositivSein;
+                }
+                return null;
+              },
+              onSaved: (wert) {
+                final val = double.tryParse(wert ?? '0') ?? 0;
+                ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
+              },
+            ),
         ],
       ),
     );
   }
 
-  ExpansionPanel _erstelleAusklappPanel(
-      {required String titel,
-      required bool isExpanded,
-      required List<Widget> children}) {
+  ExpansionPanel _erstelleAusklappPanel({
+    required String titel,
+    required bool isExpanded,
+    required List<Widget> children,
+  }) {
     return ExpansionPanel(
       headerBuilder: (context, isExpanded) => ListTile(
         title: Text(titel, style: Theme.of(context).textTheme.titleMedium),
@@ -202,19 +231,21 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                 isExpanded: _isExpanded[0],
                 children: [
                   _erstelleTextFeld(
-                      context,
-                      'anzahlMilchkuehe',
-                      l10n.textFormFieldLabelAnzahlMilchkuehe,
-                      l10n.tooltipAnzahlMilchkuehe,
-                      l10n.einheitStueck,
-                      erlaubeDezimal: false),
+                    context,
+                    'anzahlMilchkuehe',
+                    l10n.textFormFieldLabelAnzahlMilchkuehe,
+                    l10n.tooltipAnzahlMilchkuehe,
+                    l10n.einheitStueck,
+                    erlaubeDezimal: false,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'anzahlFaersenZurAbkalbung',
-                      l10n.textFormFieldLabelAnzahlFaersen,
-                      l10n.tooltipAnzahlFaersen,
-                      l10n.einheitStueck,
-                      erlaubeDezimal: false),
+                    context,
+                    'anzahlFaersenZurAbkalbung',
+                    l10n.textFormFieldLabelAnzahlFaersen,
+                    l10n.tooltipAnzahlFaersen,
+                    l10n.einheitStueck,
+                    erlaubeDezimal: false,
+                  ),
                 ],
               ),
               _erstelleAusklappPanel(
@@ -222,12 +253,13 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                 isExpanded: _isExpanded[1],
                 children: [
                   _erstelleTextFeld(
-                      context,
-                      'anteilMaennlicherKaelberProzent',
-                      l10n.textFormFieldLabelAnteilMaennlKaelber,
-                      l10n.tooltipAnteilMaennlKaelber,
-                      l10n.einheitProzent,
-                      istProzent: true),
+                    context,
+                    'anteilMaennlicherKaelberProzent',
+                    l10n.textFormFieldLabelAnteilMaennlKaelber,
+                    l10n.tooltipAnteilMaennlKaelber,
+                    l10n.einheitProzent,
+                    istProzent: true,
+                  ),
                 ],
               ),
               _erstelleAusklappPanel(
@@ -235,29 +267,33 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                 isExpanded: _isExpanded[2],
                 children: [
                   _erstelleTextFeld(
-                      context,
-                      'zwischenkalbezeitTage',
-                      l10n.textFormFieldLabelZwischenkalbezeit,
-                      l10n.tooltipZwischenkalbezeit,
-                      l10n.einheitTage),
+                    context,
+                    'zwischenkalbezeitTage',
+                    l10n.textFormFieldLabelZwischenkalbezeit,
+                    l10n.tooltipZwischenkalbezeit,
+                    l10n.einheitTage,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'haltedauerBullenkaelberTage',
-                      l10n.textFormFieldLabelHaltedauerBullen,
-                      l10n.tooltipHaltedauerBullen,
-                      l10n.einheitTage),
+                    context,
+                    'haltedauerBullenkaelberTage',
+                    l10n.textFormFieldLabelHaltedauerBullen,
+                    l10n.tooltipHaltedauerBullen,
+                    l10n.einheitTage,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'haltedauerFaersenkaelberTage',
-                      l10n.textFormFieldLabelHaltedauerFaersen,
-                      l10n.tooltipHaltedauerFaersen,
-                      l10n.einheitTage),
+                    context,
+                    'haltedauerFaersenkaelberTage',
+                    l10n.textFormFieldLabelHaltedauerFaersen,
+                    l10n.tooltipHaltedauerFaersen,
+                    l10n.einheitTage,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'leerstandszeitTage',
-                      l10n.textFormFieldLabelLeerstandszeit,
-                      l10n.tooltipLeerstandszeit,
-                      l10n.einheitTage),
+                    context,
+                    'leerstandszeitTage',
+                    l10n.textFormFieldLabelLeerstandszeit,
+                    l10n.tooltipLeerstandszeit,
+                    l10n.einheitTage,
+                  ),
                 ],
               ),
               _erstelleAusklappPanel(
@@ -265,33 +301,37 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                 isExpanded: _isExpanded[3],
                 children: [
                   _erstelleTextFeld(
-                      context,
-                      'abkalberateProzent',
-                      l10n.textFormFieldLabelAbkalberate,
-                      l10n.tooltipAbkalberate,
-                      l10n.einheitProzent,
-                      istProzent: true),
+                    context,
+                    'abkalberateProzent',
+                    l10n.textFormFieldLabelAbkalberate,
+                    l10n.tooltipAbkalberate,
+                    l10n.einheitProzent,
+                    istProzent: true,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'fruehmortalitaetProzent',
-                      l10n.textFormFieldLabelFruehmortalitaet,
-                      l10n.tooltipFruehmortalitaet,
-                      l10n.einheitProzent,
-                      istProzent: true),
+                    context,
+                    'fruehmortalitaetProzent',
+                    l10n.textFormFieldLabelFruehmortalitaet,
+                    l10n.tooltipFruehmortalitaet,
+                    l10n.einheitProzent,
+                    istProzent: true,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'totgeburtenrateProzent',
-                      l10n.textFormFieldLabelTotgeburtenrate,
-                      l10n.tooltipTotgeburtenrate,
-                      l10n.einheitProzent,
-                      istProzent: true),
+                    context,
+                    'totgeburtenrateProzent',
+                    l10n.textFormFieldLabelTotgeburtenrate,
+                    l10n.tooltipTotgeburtenrate,
+                    l10n.einheitProzent,
+                    istProzent: true,
+                  ),
                   _erstelleTextFeld(
-                      context,
-                      'anteilZwillingstraechtigkeitenProzent',
-                      l10n.textFormFieldLabelZwillingstraechtigkeiten,
-                      l10n.tooltipZwillingstraechtigkeiten,
-                      l10n.einheitProzent,
-                      istProzent: true),
+                    context,
+                    'anteilZwillingstraechtigkeitenProzent',
+                    l10n.textFormFieldLabelZwillingstraechtigkeiten,
+                    l10n.tooltipZwillingstraechtigkeiten,
+                    l10n.einheitProzent,
+                    istProzent: true,
+                  ),
                 ],
               ),
             ],
@@ -332,17 +372,26 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         ),
       );
     }
-    return ErgebnisTabelleWidget(
-      aktuellErgebnis: ergebnisse.aktuell,
-      realistischErgebnis: ergebnisse.realistisch,
-      empfehlungErgebnis: ergebnisse.empfehlung,
+    return Column(
+      children: [
+        ErgebnisChartWidget(
+          aktuellErgebnis: ergebnisse.aktuell,
+          realistischErgebnis: ergebnisse.realistisch,
+          empfehlungErgebnis: ergebnisse.empfehlung,
+        ),
+        const SizedBox(height: kPaddingLarge * 2),
+        ErgebnisTabelleWidget(
+          aktuellErgebnis: ergebnisse.aktuell,
+          realistischErgebnis: ergebnisse.realistisch,
+          empfehlungErgebnis: ergebnisse.empfehlung,
+        ),
+      ],
     );
   }
 
   Widget _buildLanguageSelector() {
     final selectedLocale = ref.watch(localeProvider);
     final currentLocale = selectedLocale ?? Localizations.localeOf(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return PopupMenuButton<String>(
       icon: const Icon(Icons.language),
@@ -361,7 +410,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
             children: [
               const Icon(Icons.phone_android),
               const SizedBox(width: 8),
-              Text('System'),
+              const Text('System'),
               const Spacer(),
               if (selectedLocale == null) const Icon(Icons.check, size: 16),
             ],
@@ -410,7 +459,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         title: Row(mainAxisSize: MainAxisSize.min, children: [
           Hero(
             tag: 'appLogo',
-            child: Image.asset('lib/assets/images/logo.png',
+            child: Image.asset('assets/images/logo.png',
                 height: 30,
                 errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.agriculture, size: kIconSizeDefault)),
@@ -421,9 +470,9 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         actions: [
           _buildLanguageSelector(),
           IconButton(
-            icon: Icon(themeMode == ThemeMode.dark
-                ? Icons.light_mode
-                : Icons.dark_mode),
+            icon: Icon(
+              themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
+            ),
             onPressed: () {
               ref.read(themeProvider.notifier).toggleTheme();
             },

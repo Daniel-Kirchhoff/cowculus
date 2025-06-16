@@ -54,5 +54,6 @@
   "tooltipFruehmortalitaet": "The percentage of calves that die within the first 28 days of life.",
   "tooltipTotgeburtenrate": "Optional: The percentage of calves that are stillborn or die within the first 24 hours.",
   "tooltipZwillingstraechtigkeiten": "The percentage of pregnancies that result in twin births.",
-  "resultsPlaceholder": "Enter your data and click 'Calculate' to display the results here."
+  "resultsPlaceholder": "Enter your data and click 'Calculate' to display the results here.",
+  "chartTitle": "Graphical Analysis"
 }
