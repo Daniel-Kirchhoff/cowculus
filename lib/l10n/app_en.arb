@@ -55,5 +55,10 @@
   "tooltipTotgeburtenrate": "Optional: The percentage of calves that are stillborn or die within the first 24 hours.",
   "tooltipZwillingstraechtigkeiten": "The percentage of pregnancies that result in twin births.",
   "resultsPlaceholder": "Enter your data and click 'Calculate' to display the results here.",
-  "chartTitle": "Graphical Analysis"
+  "chartTitle": "Graphical Analysis",
+  "buttonTextPdfExport": "Export PDF",
+  "pdfErrorNoResults": "No results to export. Please calculate first.",
+  "pdfGenerating": "Generating PDF...",
+  "pdfErrorGeneral": "Error creating PDF",
+  "pdfGeneratedOn": "Generated on:"
 }

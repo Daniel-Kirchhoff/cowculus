@@ -453,20 +453,21 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     final themeMode = ref.watch(themeProvider);
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isDesktop = screenWidth >= kDesktopBreakpoint;
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
-        title: Row(mainAxisSize: MainAxisSize.min, children: [
-          Hero(
-            tag: 'appLogo',
-            child: Image.asset('assets/images/logo.png',
-                height: 30,
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.agriculture, size: kIconSizeDefault)),
+        title: Hero(
+          tag: 'appLogo',
+          child: Image.asset(
+            isDarkMode
+                ? 'lib/assets/images/logo_dark.png'
+                : 'lib/assets/images/logo.png',
+            height: 30,
+            errorBuilder: (context, error, stackTrace) =>
+                const Icon(Icons.agriculture, size: kIconSizeDefault),
           ),
-          const SizedBox(width: kPaddingSmall),
-          Text(l10n.appBarTitle),
-        ]),
+        ),
         actions: [
           _buildLanguageSelector(),
           IconButton(

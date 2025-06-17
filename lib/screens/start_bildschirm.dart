@@ -64,6 +64,8 @@ class _StartBildschirmState extends ConsumerState<StartBildschirm>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -75,17 +77,25 @@ class _StartBildschirmState extends ConsumerState<StartBildschirm>
                 children: [
                   Hero(
                     tag: 'appLogo',
-                    child: Image.asset('lib/assets/images/logo.png',
-                        height: 80,
-                        errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.agriculture,
-                            size: 80,
-                            color: Theme.of(context).colorScheme.primary)),
+                    child: Image.asset(
+                      isDarkMode
+                          ? 'lib/assets/images/logo_dark.png'
+                          : 'lib/assets/images/logo.png',
+                      height: 80,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                          Icons.agriculture,
+                          size: 80,
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
                   ),
-                  Image.asset('lib/assets/images/fh_logo.png',
-                      height: 60,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.school, size: 60)),
+                  Image.asset(
+                    isDarkMode
+                        ? 'lib/assets/images/fh_logo_dark.png'
+                        : 'lib/assets/images/fh_logo.png',
+                    height: 60,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.school, size: 60),
+                  ),
                 ],
               ),
               Expanded(

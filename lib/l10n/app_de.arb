@@ -64,5 +64,10 @@
   "tooltipTotgeburtenrate": "Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.",
   "tooltipZwillingstraechtigkeiten": "Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.",
   "resultsPlaceholder": "Geben Sie Ihre Daten ein und klicken Sie auf 'Berechnen', um die Ergebnisse hier anzuzeigen.",
-  "chartTitle": "Grafische Auswertung"
+  "chartTitle": "Grafische Auswertung",
+  "buttonTextPdfExport": "PDF exportieren",
+  "pdfErrorNoResults": "Keine Ergebnisse zum Exportieren vorhanden. Bitte zuerst berechnen.",
+  "pdfGenerating": "PDF wird erstellt...",
+  "pdfErrorGeneral": "Fehler beim Erstellen des PDF",
+  "pdfGeneratedOn": "Erstellt am:"
 }
