@@ -60,5 +60,16 @@
   "pdfErrorNoResults": "No results to export. Please calculate first.",
   "pdfGenerating": "Generating PDF...",
   "pdfErrorGeneral": "Error creating PDF",
-  "pdfGeneratedOn": "Generated on:"
+  "pdfGeneratedOn": "Generated on:",
+  "helpButtonTooltip": "Help & Information",
+  "helpDialogTitle": "App Information",
+  "helpDialogAboutTitle": "About cowculus",
+  "helpDialogAboutText": "This app is based on the master's thesis by Maren Thiemann and brings her calculation tool for determining the need for individual calf pens into practice. It helps dairy farmers and advisors calculate individual space requirements and identify optimization opportunities in calf housing management.",
+  "helpDialogUsageTitle": "How to Use",
+  "helpDialogUsageText": "1. Enter your farm-specific parameters in the input fields\n2. Click 'Calculate'\n3. View the results in the table and chart\n4. Use the three scenarios for different planning approaches",
+  "helpDialogScenariosTitle": "Scenarios",
+  "helpDialogScenariosText": "• Current: Based on your entered farm-specific values\n• Realistic: Uses average values from NRW/Germany with 25% safety reserve\n• Recommendation: Offers optimized recommendation values for consulting",
+  "helpDialogCloseButton": "Close",
+  "programmerInfo": "Developed by Daniel Kirchhoff • App development and technical implementation • Contact: info@danielkirchhoff.de",
+  "appVersion": "Version 1.0.0"
 }

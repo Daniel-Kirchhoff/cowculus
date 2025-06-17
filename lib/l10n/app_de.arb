@@ -69,5 +69,16 @@
   "pdfErrorNoResults": "Keine Ergebnisse zum Exportieren vorhanden. Bitte zuerst berechnen.",
   "pdfGenerating": "PDF wird erstellt...",
   "pdfErrorGeneral": "Fehler beim Erstellen des PDF",
-  "pdfGeneratedOn": "Erstellt am:"
+  "pdfGeneratedOn": "Erstellt am:",
+  "helpButtonTooltip": "Hilfe & Information",
+  "helpDialogTitle": "App-Information",
+  "helpDialogAboutTitle": "Über cowculus",
+  "helpDialogAboutText": "Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Sie hilft Milchviehhaltern und Beratern dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.",
+  "helpDialogUsageTitle": "Bedienung",
+  "helpDialogUsageText": "1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf 'Berechnen'\n3. Betrachten Sie die Ergebnisse in der Tabelle und im Diagramm\n4. Nutzen Sie die drei Szenarien für verschiedene Planungsansätze",
+  "helpDialogScenariosTitle": "Szenarien",
+  "helpDialogScenariosText": "• Aktuell: Basiert auf Ihren eingegebenen betriebsspezifischen Werten\n• Realistisch: Verwendet Durchschnittswerte aus NRW/Deutschland mit 25% Sicherheitsreserve\n• Empfehlung: Bietet optimierte Empfehlungswerte für die Beratung",
+  "helpDialogCloseButton": "Schließen",
+  "programmerInfo": "Entwickelt von Daniel Kirchhoff • App-Entwicklung und technische Umsetzung • Kontakt: info@danielkirchhoff.de",
+"appVersion": "Version 1.0.0"
 }
