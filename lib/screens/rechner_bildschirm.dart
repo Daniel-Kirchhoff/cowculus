@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/rechner_providers.dart';
-import '../models/berechnungs_eingabe.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
 import '../widgets/ergebnis_chart_widget.dart';
 import '../config/app_constants.dart';
@@ -133,89 +132,68 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       {bool istProzent = false,
       bool erlaubeDezimal = true,
       bool istHeader = false}) {
+    if (istHeader) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+          child: Text(
+            bezeichnung,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (istHeader)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-              child: Text(
-                bezeichnung,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            )
-          else
-            Row(
-              children: [
-                // HIER IST DIE ÄNDERUNG:
-                Expanded(
-                  child: Text(
-                    bezeichnung,
-                    style: Theme.of(context).inputDecorationTheme.labelStyle,
-                  ),
-                ),
-                const SizedBox(width: kPaddingSmall / 2),
-                Tooltip(
-                  message: tooltipText,
-                  padding: const EdgeInsets.all(kPaddingSmall),
-                  textStyle:
-                      TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-                  decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(kAppBorderRadius / 2),
-                  ),
-                  child: Icon(
-                    Icons.info_outline,
-                    size: 16,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.6),
-                  ),
-                ),
-              ],
+      child: TextFormField(
+        controller: _controllers[schluessel],
+        decoration: InputDecoration(
+          labelText: bezeichnung,
+          hintText: AppLocalizations.of(context)!.textFieldHint,
+          suffixText: einheit,
+          suffixIcon: Tooltip(
+            message: tooltipText,
+            padding: const EdgeInsets.all(kPaddingSmall),
+            textStyle:
+                TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(kAppBorderRadius / 2),
             ),
-          if (!istHeader) const SizedBox(height: kPaddingSmall / 2),
-          if (!istHeader)
-            TextFormField(
-              controller: _controllers[schluessel],
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context)!.textFieldHint,
-                suffixText: einheit,
-              ),
-              keyboardType:
-                  TextInputType.numberWithOptions(decimal: erlaubeDezimal),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                    RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
-              ],
-              onFieldSubmitted: (_) => _submitAndCalculate(),
-              validator: (wert) {
-                final l10n = AppLocalizations.of(context)!;
-                if (wert == null || wert.isEmpty) {
-                  return l10n.validatorMsgBitteWertEingeben;
-                }
-                if (double.tryParse(wert) == null) {
-                  return l10n.validatorMsgUngueltigeZahl;
-                }
-                if (double.parse(wert) < 0) {
-                  return l10n.validatorMsgWertMussPositivSein;
-                }
-                return null;
-              },
-              onSaved: (wert) {
-                final val = double.tryParse(wert ?? '0') ?? 0;
-                ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
-              },
+            child: Icon(
+              Icons.info_outline,
+              size: 20,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
             ),
+          ),
+        ),
+        keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(
+              RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
         ],
+        onFieldSubmitted: (_) => _submitAndCalculate(),
+        validator: (wert) {
+          final l10n = AppLocalizations.of(context)!;
+          if (wert == null || wert.isEmpty)
+            return l10n.validatorMsgBitteWertEingeben;
+          if (double.tryParse(wert) == null)
+            return l10n.validatorMsgUngueltigeZahl;
+          if (double.parse(wert) < 0)
+            return l10n.validatorMsgWertMussPositivSein;
+          return null;
+        },
+        onSaved: (wert) {
+          final val = double.tryParse(wert ?? '0') ?? 0;
+          ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
+        },
       ),
     );
   }
@@ -554,8 +532,8 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                               children: [
                                 Image.asset(
                                   isDarkMode
-                                      ? 'lib/assets/images/logo_dark.png'
-                                      : 'lib/assets/images/logo.png',
+                                      ? 'lib/assets/images/logo_bild_dark.png'
+                                      : 'lib/assets/images/logo_bild.png',
                                   height: 40,
                                   errorBuilder: (context, error, stackTrace) =>
                                       Icon(Icons.agriculture,
@@ -582,8 +560,8 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
                               children: [
                                 Image.asset(
                                   isDarkMode
-                                      ? 'lib/assets/images/logo_dark.png'
-                                      : 'lib/assets/images/logo.png',
+                                      ? 'lib/assets/images/logo_bild_dark.png'
+                                      : 'lib/assets/images/logo_bild.png',
                                   height: 40,
                                   errorBuilder: (context, error, stackTrace) =>
                                       Icon(Icons.agriculture,
@@ -708,8 +686,8 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
           tag: 'appLogo',
           child: Image.asset(
             isDarkMode
-                ? 'lib/assets/images/logo_dark.png'
-                : 'lib/assets/images/logo.png',
+                ? 'lib/assets/images/logo_bild_dark.png'
+                : 'lib/assets/images/logo_bild.png',
             height: 30,
             errorBuilder: (context, error, stackTrace) =>
                 const Icon(Icons.agriculture, size: kIconSizeDefault),

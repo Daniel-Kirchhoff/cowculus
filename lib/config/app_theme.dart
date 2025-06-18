@@ -31,17 +31,21 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: kLightColorSurface,
+        fillColor: kLightColorInputBackground,
         hintStyle: const TextStyle(color: kLightColorFont2),
-        labelStyle: const TextStyle(color: kLightColorFont2),
+        labelStyle: const TextStyle(color: kLightColorFont1),
         floatingLabelStyle: const TextStyle(color: kLightColorPrimary),
-        border: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kAppBorderRadius),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: kLightColorInputBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kAppBorderRadius),
           borderSide: const BorderSide(color: kLightColorPrimary, width: 2),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(kAppBorderRadius),
+          borderSide: const BorderSide(color: kLightColorInputBorder),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -111,17 +115,21 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: kDarkColorSurface,
+        fillColor: kDarkColorInputBackground,
         hintStyle: const TextStyle(color: kDarkColorFont2),
-        labelStyle: const TextStyle(color: kDarkColorFont2),
+        labelStyle: const TextStyle(color: kDarkColorFont1),
         floatingLabelStyle: const TextStyle(color: kDarkColorPrimary),
-        border: OutlineInputBorder(
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kAppBorderRadius),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: kDarkColorInputBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kAppBorderRadius),
           borderSide: const BorderSide(color: kDarkColorPrimary, width: 2),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(kAppBorderRadius),
+          borderSide: const BorderSide(color: kDarkColorInputBorder),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

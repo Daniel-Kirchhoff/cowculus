@@ -87,8 +87,6 @@ class BerechnungsEingabe {
       case 'anteilZwillingstraechtigkeitenProzent':
         return copyWith(anteilZwillingstraechtigkeitenProzent: wert);
       default:
-        print(
-            'Unbekanntes Feld in BerechnungsEingabe.aktualisiereFeld: $feldName');
         return this; // Gibt die aktuelle (unveränderte) Instanz zurück
     }
   }
