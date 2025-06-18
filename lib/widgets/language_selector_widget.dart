@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../providers/locale_provider.dart';
 
-class LanguageSelector extends ConsumerWidget {
-  const LanguageSelector({super.key});
+class LanguageSelectorWidget extends ConsumerWidget {
+  const LanguageSelectorWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -13,6 +12,7 @@ class LanguageSelector extends ConsumerWidget {
 
     return PopupMenuButton<String>(
       icon: const Icon(Icons.language),
+      tooltip: 'Sprache wechseln',
       onSelected: (String languageCode) {
         if (languageCode == 'system') {
           ref.read(localeProvider.notifier).clearLocale();
@@ -27,9 +27,9 @@ class LanguageSelector extends ConsumerWidget {
             children: [
               const Icon(Icons.phone_android),
               const SizedBox(width: 8),
-              Text(AppLocalizations.of(context)!.systemLanguage ?? 'System'),
-              if (selectedLocale == null) 
-                const Icon(Icons.check, size: 16),
+              const Text('System'),
+              const Spacer(),
+              if (selectedLocale == null) const Icon(Icons.check, size: 16),
             ],
           ),
         ),
@@ -41,6 +41,7 @@ class LanguageSelector extends ConsumerWidget {
               const Text('🇩🇪'),
               const SizedBox(width: 8),
               const Text('Deutsch'),
+              const Spacer(),
               if (currentLocale.languageCode == 'de' && selectedLocale != null)
                 const Icon(Icons.check, size: 16),
             ],
@@ -50,22 +51,11 @@ class LanguageSelector extends ConsumerWidget {
           value: 'en',
           child: Row(
             children: [
-              const Text('🇺🇸'),
+              const Text('🇬🇧'),
               const SizedBox(width: 8),
               const Text('English'),
+              const Spacer(),
               if (currentLocale.languageCode == 'en' && selectedLocale != null)
-                const Icon(Icons.check, size: 16),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'pt',
-          child: Row(
-            children: [
-              const Text('🇵🇹'),
-              const SizedBox(width: 8),
-              const Text('Português'),
-              if (currentLocale.languageCode == 'pt' && selectedLocale != null)
                 const Icon(Icons.check, size: 16),
             ],
           ),

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/rechner_providers.dart';
 import '../widgets/ergebnis_tabelle_widget.dart';
 import '../widgets/ergebnis_chart_widget.dart';
+import '../widgets/input_form_widget.dart';
 import '../config/app_constants.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
+import '../helpers/info_dialog_helper.dart';
+import '../widgets/language_selector_widget.dart';
 
 class RechnerBildschirm extends ConsumerStatefulWidget {
   const RechnerBildschirm({super.key});
@@ -18,49 +20,18 @@ class RechnerBildschirm extends ConsumerStatefulWidget {
 }
 
 class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
-  final _formKey = GlobalKey<FormState>();
-  final Map<String, TextEditingController> _controllers = {};
-  final List<bool> _isExpanded = [true, false, false, false];
-  late final FocusNode _buttonFocusNode;
   late final ScrollController _scrollController;
   final GlobalKey _resultsKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    _buttonFocusNode = FocusNode();
     _scrollController = ScrollController();
-    final eingabe = ref.read(eingabeProvider);
-    _controllers['anzahlMilchkuehe'] =
-        TextEditingController(text: eingabe.anzahlMilchkuehe.toString());
-    _controllers['anzahlFaersenZurAbkalbung'] = TextEditingController(
-        text: eingabe.anzahlFaersenZurAbkalbung.toString());
-    _controllers['anteilMaennlicherKaelberProzent'] = TextEditingController(
-        text: eingabe.anteilMaennlicherKaelberProzent.toString());
-    _controllers['zwischenkalbezeitTage'] =
-        TextEditingController(text: eingabe.zwischenkalbezeitTage.toString());
-    _controllers['haltedauerBullenkaelberTage'] = TextEditingController(
-        text: eingabe.haltedauerBullenkaelberTage.toString());
-    _controllers['haltedauerFaersenkaelberTage'] = TextEditingController(
-        text: eingabe.haltedauerFaersenkaelberTage.toString());
-    _controllers['leerstandszeitTage'] =
-        TextEditingController(text: eingabe.leerstandszeitTage.toString());
-    _controllers['abkalberateProzent'] =
-        TextEditingController(text: eingabe.abkalberateProzent.toString());
-    _controllers['fruehmortalitaetProzent'] =
-        TextEditingController(text: eingabe.fruehmortalitaetProzent.toString());
-    _controllers['totgeburtenrateProzent'] =
-        TextEditingController(text: eingabe.totgeburtenrateProzent.toString());
-    _controllers['anteilZwillingstraechtigkeitenProzent'] =
-        TextEditingController(
-            text: eingabe.anteilZwillingstraechtigkeitenProzent.toString());
   }
 
   @override
   void dispose() {
-    _buttonFocusNode.dispose();
     _scrollController.dispose();
-    _controllers.forEach((key, controller) => controller.dispose());
     super.dispose();
   }
 
@@ -85,284 +56,15 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     }
   }
 
-  void _submitAndCalculate() {
-    FocusScope.of(context).unfocus();
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState!.save();
-      final aktuelleEingabe = ref.read(eingabeProvider);
-      final berechnungsService = ref.read(berechnungsServiceProvider);
-      final aktuellErgebnis = berechnungsService.berechne(aktuelleEingabe);
-      final realistischEingabe = aktuelleEingabe.copyWith(
-        zwischenkalbezeitTage: 401,
-        haltedauerBullenkaelberTage: 28,
-        haltedauerFaersenkaelberTage: 14,
-        leerstandszeitTage: 7,
-        abkalberateProzent: 95,
-        fruehmortalitaetProzent: 5,
-        totgeburtenrateProzent: 3.95,
-        anteilZwillingstraechtigkeitenProzent: 2.9,
-      );
-      final realistischErgebnis =
-          berechnungsService.berechne(realistischEingabe, reserveProzent: 25);
-      final empfZKZ = aktuelleEingabe.zwischenkalbezeitTage > 410.0
-          ? aktuelleEingabe.zwischenkalbezeitTage
-          : 410.0;
-      final empfehlungEingabe = aktuelleEingabe.copyWith(
-        zwischenkalbezeitTage: empfZKZ,
-        haltedauerBullenkaelberTage: 28,
-        haltedauerFaersenkaelberTage: 14,
-        leerstandszeitTage: 7,
-      );
-      final empfehlungErgebnis = berechnungsService.berechne(empfehlungEingabe);
-      final ergebnisse = (
-        aktuell: aktuellErgebnis,
-        realistisch: realistischErgebnis,
-        empfehlung: empfehlungErgebnis,
-      );
-      ref.read(ergebnisProvider.notifier).state = ergebnisse;
-
-      Future.delayed(const Duration(milliseconds: 100), () {
-        _scrollToResults();
-      });
-    }
+  void _onFormSubmit() {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      _scrollToResults();
+    });
   }
 
-  Widget _erstelleTextFeld(BuildContext context, String schluessel,
-      String bezeichnung, String tooltipText, String einheit,
-      {bool istProzent = false,
-      bool erlaubeDezimal = true,
-      bool istHeader = false}) {
-    if (istHeader) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-          child: Text(
-            bezeichnung,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kPaddingSmall),
-      child: TextFormField(
-        controller: _controllers[schluessel],
-        decoration: InputDecoration(
-          labelText: bezeichnung,
-          hintText: AppLocalizations.of(context)!.textFieldHint,
-          suffixText: einheit,
-          suffixIcon: Tooltip(
-            message: tooltipText,
-            padding: const EdgeInsets.all(kPaddingSmall),
-            textStyle:
-                TextStyle(color: Theme.of(context).colorScheme.onPrimary),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.9),
-              borderRadius: BorderRadius.circular(kAppBorderRadius / 2),
-            ),
-            child: Icon(
-              Icons.info_outline,
-              size: 20,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ),
-        ),
-        keyboardType: TextInputType.numberWithOptions(decimal: erlaubeDezimal),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(
-              RegExp(erlaubeDezimal ? r'^\d*\.?\d*' : r'^\d*'))
-        ],
-        onFieldSubmitted: (_) => _submitAndCalculate(),
-        validator: (wert) {
-          final l10n = AppLocalizations.of(context)!;
-          if (wert == null || wert.isEmpty)
-            return l10n.validatorMsgBitteWertEingeben;
-          if (double.tryParse(wert) == null)
-            return l10n.validatorMsgUngueltigeZahl;
-          if (double.parse(wert) < 0)
-            return l10n.validatorMsgWertMussPositivSein;
-          return null;
-        },
-        onSaved: (wert) {
-          final val = double.tryParse(wert ?? '0') ?? 0;
-          ref.read(eingabeProvider.notifier).updateFeld(schluessel, val);
-        },
-      ),
-    );
-  }
-
-  ExpansionPanel _erstelleAusklappPanel({
-    required String titel,
-    required bool isExpanded,
-    required List<Widget> children,
-  }) {
-    return ExpansionPanel(
-      headerBuilder: (context, isExpanded) => ListTile(
-        title: Text(titel, style: Theme.of(context).textTheme.titleMedium),
-      ),
-      body: Padding(
-          padding: kPanelPaddingBody, child: Column(children: children)),
-      isExpanded: isExpanded,
-      canTapOnHeader: true,
-    );
-  }
-
-  Widget _buildInputColumn(AppLocalizations l10n) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            l10n.mainParameterFormTitle,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: kPaddingMedium),
-          ExpansionPanelList(
-            expansionCallback: (int index, bool isExpanded) {
-              setState(() {
-                _isExpanded[index] = !_isExpanded[index];
-              });
-            },
-            elevation: 1,
-            children: [
-              _erstelleAusklappPanel(
-                titel: l10n.panelTitleTierzahlen,
-                isExpanded: _isExpanded[0],
-                children: [
-                  _erstelleTextFeld(
-                    context,
-                    'anzahlMilchkuehe',
-                    l10n.textFormFieldLabelAnzahlMilchkuehe,
-                    l10n.tooltipAnzahlMilchkuehe,
-                    l10n.einheitStueck,
-                    erlaubeDezimal: false,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'anzahlFaersenZurAbkalbung',
-                    l10n.textFormFieldLabelAnzahlFaersen,
-                    l10n.tooltipAnzahlFaersen,
-                    l10n.einheitStueck,
-                    erlaubeDezimal: false,
-                  ),
-                ],
-              ),
-              _erstelleAusklappPanel(
-                titel: l10n.panelTitleGeschlecht,
-                isExpanded: _isExpanded[1],
-                children: [
-                  _erstelleTextFeld(
-                    context,
-                    'anteilMaennlicherKaelberProzent',
-                    l10n.textFormFieldLabelAnteilMaennlKaelber,
-                    l10n.tooltipAnteilMaennlKaelber,
-                    l10n.einheitProzent,
-                    istProzent: true,
-                  ),
-                ],
-              ),
-              _erstelleAusklappPanel(
-                titel: l10n.panelTitleZeit,
-                isExpanded: _isExpanded[2],
-                children: [
-                  _erstelleTextFeld(
-                    context,
-                    'zwischenkalbezeitTage',
-                    l10n.textFormFieldLabelZwischenkalbezeit,
-                    l10n.tooltipZwischenkalbezeit,
-                    l10n.einheitTage,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'haltedauerBullenkaelberTage',
-                    l10n.textFormFieldLabelHaltedauerBullen,
-                    l10n.tooltipHaltedauerBullen,
-                    l10n.einheitTage,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'haltedauerFaersenkaelberTage',
-                    l10n.textFormFieldLabelHaltedauerFaersen,
-                    l10n.tooltipHaltedauerFaersen,
-                    l10n.einheitTage,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'leerstandszeitTage',
-                    l10n.textFormFieldLabelLeerstandszeit,
-                    l10n.tooltipLeerstandszeit,
-                    l10n.einheitTage,
-                  ),
-                ],
-              ),
-              _erstelleAusklappPanel(
-                titel: l10n.panelTitleReproduktion,
-                isExpanded: _isExpanded[3],
-                children: [
-                  _erstelleTextFeld(
-                    context,
-                    'abkalberateProzent',
-                    l10n.textFormFieldLabelAbkalberate,
-                    l10n.tooltipAbkalberate,
-                    l10n.einheitProzent,
-                    istProzent: true,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'fruehmortalitaetProzent',
-                    l10n.textFormFieldLabelFruehmortalitaet,
-                    l10n.tooltipFruehmortalitaet,
-                    l10n.einheitProzent,
-                    istProzent: true,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'totgeburtenrateProzent',
-                    l10n.textFormFieldLabelTotgeburtenrate,
-                    l10n.tooltipTotgeburtenrate,
-                    l10n.einheitProzent,
-                    istProzent: true,
-                  ),
-                  _erstelleTextFeld(
-                    context,
-                    'anteilZwillingstraechtigkeitenProzent',
-                    l10n.textFormFieldLabelZwillingstraechtigkeiten,
-                    l10n.tooltipZwillingstraechtigkeiten,
-                    l10n.einheitProzent,
-                    istProzent: true,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: kPaddingLarge),
-          Center(
-            child: KeyboardListener(
-              focusNode: _buttonFocusNode,
-              onKeyEvent: (KeyEvent event) {
-                if (event is KeyDownEvent &&
-                    (event.logicalKey == LogicalKeyboardKey.enter ||
-                        event.logicalKey == LogicalKeyboardKey.numpadEnter)) {
-                  _submitAndCalculate();
-                }
-              },
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.calculate, size: kIconSizeDefault),
-                onPressed: _submitAndCalculate,
-                label: Text(l10n.buttonTextBerechnen),
-              ),
-            ),
-          ),
-        ],
-      ),
+  Widget _buildInputColumn() {
+    return InputFormWidget(
+      onSubmit: _onFormSubmit,
     );
   }
 
@@ -397,276 +99,6 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     );
   }
 
-  Widget _buildLanguageSelector() {
-    final selectedLocale = ref.watch(localeProvider);
-    final currentLocale = selectedLocale ?? Localizations.localeOf(context);
-
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.language),
-      tooltip: 'Sprache wechseln',
-      onSelected: (String languageCode) {
-        if (languageCode == 'system') {
-          ref.read(localeProvider.notifier).clearLocale();
-        } else {
-          ref.read(localeProvider.notifier).setLocale(Locale(languageCode));
-        }
-      },
-      itemBuilder: (BuildContext context) => [
-        PopupMenuItem<String>(
-          value: 'system',
-          child: Row(
-            children: [
-              const Icon(Icons.phone_android),
-              const SizedBox(width: 8),
-              const Text('System'),
-              const Spacer(),
-              if (selectedLocale == null) const Icon(Icons.check, size: 16),
-            ],
-          ),
-        ),
-        const PopupMenuDivider(),
-        PopupMenuItem<String>(
-          value: 'de',
-          child: Row(
-            children: [
-              const Text('🇩🇪'),
-              const SizedBox(width: 8),
-              const Text('Deutsch'),
-              const Spacer(),
-              if (currentLocale.languageCode == 'de' && selectedLocale != null)
-                const Icon(Icons.check, size: 16),
-            ],
-          ),
-        ),
-        PopupMenuItem<String>(
-          value: 'en',
-          child: Row(
-            children: [
-              const Text('🇬🇧'),
-              const SizedBox(width: 8),
-              const Text('English'),
-              const Spacer(),
-              if (currentLocale.languageCode == 'en' && selectedLocale != null)
-                const Icon(Icons.check, size: 16),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showInfoDialog() {
-    final l10n = AppLocalizations.of(context)!;
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              Icon(Icons.info_outline,
-                  color: Theme.of(context).colorScheme.primary),
-              const SizedBox(width: 8),
-              Text(l10n.helpDialogTitle),
-            ],
-          ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  l10n.helpDialogAboutTitle,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  _wrapText(l10n.helpDialogAboutText, 60),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.helpDialogUsageTitle,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  _wrapText(l10n.helpDialogUsageText, 60),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.helpDialogScenariosTitle,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  _wrapText(l10n.helpDialogScenariosText, 60),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withOpacity(0.2),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      MediaQuery.of(context).size.width >= kDesktopBreakpoint
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Image.asset(
-                                  isDarkMode
-                                      ? 'lib/assets/images/logo_bild_dark.png'
-                                      : 'lib/assets/images/logo_bild.png',
-                                  height: 40,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.agriculture,
-                                          size: 40,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                ),
-                                Image.asset(
-                                  isDarkMode
-                                      ? 'lib/assets/images/fh_logo_dark.png'
-                                      : 'lib/assets/images/fh_logo.png',
-                                  height: 40,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.school,
-                                          size: 40,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                ),
-                              ],
-                            )
-                          : Column(
-                              children: [
-                                Image.asset(
-                                  isDarkMode
-                                      ? 'lib/assets/images/logo_bild_dark.png'
-                                      : 'lib/assets/images/logo_bild.png',
-                                  height: 40,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.agriculture,
-                                          size: 40,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                ),
-                                const SizedBox(height: 8),
-                                Image.asset(
-                                  isDarkMode
-                                      ? 'lib/assets/images/fh_logo_dark.png'
-                                      : 'lib/assets/images/fh_logo.png',
-                                  height: 40,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      Icon(Icons.school,
-                                          size: 40,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary),
-                                ),
-                              ],
-                            ),
-                      const SizedBox(height: 12),
-                      Text(
-                        _wrapText(l10n.programmerInfo, 60),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.7),
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.appVersion,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withOpacity(0.5),
-                              fontStyle: FontStyle.italic,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            Center(
-              child: ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                child: Text(l10n.helpDialogCloseButton),
-              ),
-            ),
-          ],
-          actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        );
-      },
-    );
-  }
-
-  String _wrapText(String text, int maxLineLength) {
-    if (text.length <= maxLineLength) return text;
-
-    final words = text.split(' ');
-    final lines = <String>[];
-    String currentLine = '';
-
-    for (final word in words) {
-      if (word.startsWith('•') ||
-          word.startsWith('1.') ||
-          word.startsWith('2.') ||
-          word.startsWith('3.') ||
-          word.startsWith('4.')) {
-        if (currentLine.isNotEmpty) {
-          lines.add(currentLine.trim());
-          currentLine = '';
-        }
-        currentLine = word;
-      } else if (currentLine.isEmpty) {
-        currentLine = word;
-      } else if ((currentLine + ' ' + word).length <= maxLineLength) {
-        currentLine += ' ' + word;
-      } else {
-        lines.add(currentLine);
-        currentLine = word;
-      }
-    }
-
-    if (currentLine.isNotEmpty) {
-      lines.add(currentLine);
-    }
-
-    return lines.join('\n');
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -679,7 +111,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.help_outline),
-          onPressed: _showInfoDialog,
+          onPressed: () => InfoDialogHelper.showInfoDialog(context),
           tooltip: l10n.helpButtonTooltip,
         ),
         title: Hero(
@@ -694,7 +126,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
           ),
         ),
         actions: [
-          _buildLanguageSelector(),
+          const LanguageSelectorWidget(),
           IconButton(
             icon: Icon(
               themeMode == ThemeMode.dark ? Icons.light_mode : Icons.dark_mode,
@@ -708,12 +140,12 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
-        child: isDesktop ? _buildDesktopLayout(l10n) : _buildMobileLayout(l10n),
+        child: isDesktop ? _buildDesktopLayout() : _buildMobileLayout(),
       ),
     );
   }
 
-  Widget _buildDesktopLayout(AppLocalizations l10n) {
+  Widget _buildDesktopLayout() {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -721,7 +153,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
           flex: 2,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(kPaddingLarge),
-            child: _buildInputColumn(l10n),
+            child: _buildInputColumn(),
           ),
         ),
         const VerticalDivider(width: 1),
@@ -736,13 +168,13 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     );
   }
 
-  Widget _buildMobileLayout(AppLocalizations l10n) {
+  Widget _buildMobileLayout() {
     return SingleChildScrollView(
       controller: _scrollController,
       padding: const EdgeInsets.all(kPaddingLarge),
       child: Column(
         children: [
-          _buildInputColumn(l10n),
+          _buildInputColumn(),
           const SizedBox(height: kPaddingLarge),
           _buildResultsColumn(),
         ],
