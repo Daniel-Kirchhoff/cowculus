@@ -153,9 +153,12 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
           else
             Row(
               children: [
-                Text(
-                  bezeichnung,
-                  style: Theme.of(context).inputDecorationTheme.labelStyle,
+                // HIER IST DIE ÄNDERUNG:
+                Expanded(
+                  child: Text(
+                    bezeichnung,
+                    style: Theme.of(context).inputDecorationTheme.labelStyle,
+                  ),
                 ),
                 const SizedBox(width: kPaddingSmall / 2),
                 Tooltip(
