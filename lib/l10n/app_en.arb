@@ -71,5 +71,8 @@
   "helpDialogScenariosText": "• Current: Based on your entered farm-specific values\n• Realistic: Uses average values from NRW/Germany with 25% safety reserve\n• Recommendation: Offers optimized recommendation values for consulting",
   "helpDialogCloseButton": "Close",
   "programmerInfo": "Developed by Daniel Kirchhoff • App development and technical implementation • Contact: info@danielkirchhoff.de",
-  "appVersion": "Version 1.0.0"
+  "appVersion": "Version 1.0.0",
+  "loadingCalculating": "Calculating...",
+  "loadingPleaseWait": "Please wait a moment",
+  "buttonTextCalculating": "Calculating..."
 }

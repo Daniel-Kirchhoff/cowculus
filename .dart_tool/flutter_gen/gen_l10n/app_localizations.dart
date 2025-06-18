@@ -499,7 +499,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpDialogUsageText.
   ///
   /// In de, this message translates to:
-  /// **'1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf \'Berechnen\'\n3. Betrachten Sie die Ergebnisse in der Tabelle und im Diagramm\n4. Nutzen Sie die drei Szenarien für verschiedene Planungsansätze'**
+  /// **'1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf \'Berechnen\''**
   String get helpDialogUsageText;
 
   /// No description provided for @helpDialogScenariosTitle.
@@ -531,6 +531,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Version 1.0.0'**
   String get appVersion;
+
+  /// No description provided for @loadingCalculating.
+  ///
+  /// In de, this message translates to:
+  /// **'Berechnung läuft...'**
+  String get loadingCalculating;
+
+  /// No description provided for @loadingPleaseWait.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte warten Sie einen Moment'**
+  String get loadingPleaseWait;
+
+  /// No description provided for @buttonTextCalculating.
+  ///
+  /// In de, this message translates to:
+  /// **'Berechne...'**
+  String get buttonTextCalculating;
 }
 
 class _AppLocalizationsDelegate

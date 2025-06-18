@@ -5,13 +5,16 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../providers/rechner_providers.dart';
 import '../config/app_constants.dart';
+import '../helpers/loading_manager.dart';
 
 class InputFormWidget extends ConsumerStatefulWidget {
   final VoidCallback onSubmit;
-  
+  final bool isLoading;
+
   const InputFormWidget({
     super.key,
     required this.onSubmit,
+    this.isLoading = false,
   });
 
   @override
@@ -96,7 +99,7 @@ class _InputFormWidgetState extends ConsumerState<InputFormWidget> {
         empfehlung: empfehlungErgebnis,
       );
       ref.read(ergebnisProvider.notifier).state = ergebnisse;
-      
+
       widget.onSubmit();
     }
   }
@@ -191,7 +194,7 @@ class _InputFormWidgetState extends ConsumerState<InputFormWidget> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Form(
       key: _formKey,
       child: Column(
@@ -331,10 +334,13 @@ class _InputFormWidgetState extends ConsumerState<InputFormWidget> {
                   _submitAndCalculate();
                 }
               },
-              child: ElevatedButton.icon(
-                icon: const Icon(Icons.calculate, size: kIconSizeDefault),
-                onPressed: _submitAndCalculate,
-                label: Text(l10n.buttonTextBerechnen),
+              child: LoadingManager.buildLoadingButton(
+                context: context,
+                onPressed: widget.isLoading ? null : _submitAndCalculate,
+                isLoading: widget.isLoading,
+                normalText: l10n.buttonTextBerechnen,
+                loadingText: l10n.buttonTextCalculating,
+                icon: Icons.calculate,
               ),
             ),
           ),

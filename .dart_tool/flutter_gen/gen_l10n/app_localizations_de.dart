@@ -235,7 +235,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get helpDialogUsageText =>
-      '1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf \'Berechnen\'\n3. Betrachten Sie die Ergebnisse in der Tabelle und im Diagramm\n4. Nutzen Sie die drei Szenarien für verschiedene Planungsansätze';
+      '1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf \'Berechnen\'';
 
   @override
   String get helpDialogScenariosTitle => 'Szenarien';
@@ -253,4 +253,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get appVersion => 'Version 1.0.0';
+
+  @override
+  String get loadingCalculating => 'Berechnung läuft...';
+
+  @override
+  String get loadingPleaseWait => 'Bitte warten Sie einen Moment';
+
+  @override
+  String get buttonTextCalculating => 'Berechne...';
 }

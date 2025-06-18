@@ -80,5 +80,8 @@
   "helpDialogScenariosText": "• Aktuell: Basiert auf Ihren eingegebenen betriebsspezifischen Werten\n• Realistisch: Verwendet Durchschnittswerte aus NRW/Deutschland mit 25% Sicherheitsreserve\n• Empfehlung: Bietet optimierte Empfehlungswerte für die Beratung",
   "helpDialogCloseButton": "Schließen",
   "programmerInfo": "Entwickelt von Daniel Kirchhoff • App-Entwicklung und technische Umsetzung • Kontakt: info@danielkirchhoff.de",
-"appVersion": "Version 1.0.0"
+  "appVersion": "Version 1.0.0",
+  "loadingCalculating": "Berechnung läuft...",
+  "loadingPleaseWait": "Bitte warten Sie einen Moment",
+  "buttonTextCalculating": "Berechne..."
 }

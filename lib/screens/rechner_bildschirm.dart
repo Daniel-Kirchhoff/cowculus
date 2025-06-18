@@ -10,6 +10,7 @@ import '../config/app_constants.dart';
 import '../providers/theme_provider.dart';
 import '../providers/locale_provider.dart';
 import '../helpers/info_dialog_helper.dart';
+import '../helpers/loading_manager.dart';
 import '../widgets/language_selector_widget.dart';
 
 class RechnerBildschirm extends ConsumerStatefulWidget {
@@ -22,6 +23,7 @@ class RechnerBildschirm extends ConsumerStatefulWidget {
 class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   late final ScrollController _scrollController;
   final GlobalKey _resultsKey = GlobalKey();
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -56,20 +58,32 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
     }
   }
 
-  void _onFormSubmit() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      _scrollToResults();
-    });
+  void _onFormSubmit() async {
+    await LoadingManager.executeWithLoading(
+      onLoadingStart: () => setState(() => _isLoading = true),
+      onLoadingComplete: () => setState(() => _isLoading = false),
+      onSuccess: () {
+        Future.delayed(const Duration(milliseconds: 100), () {
+          _scrollToResults();
+        });
+      },
+    );
   }
 
   Widget _buildInputColumn() {
     return InputFormWidget(
       onSubmit: _onFormSubmit,
+      isLoading: _isLoading,
     );
   }
 
   Widget _buildResultsColumn() {
     final ergebnisse = ref.watch(ergebnisProvider);
+
+    if (_isLoading) {
+      return LoadingManager.buildLoadingWidget(context);
+    }
+
     if (ergebnisse == null) {
       return Center(
         child: Padding(
@@ -81,6 +95,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         ),
       );
     }
+
     return Column(
       key: _resultsKey,
       children: [

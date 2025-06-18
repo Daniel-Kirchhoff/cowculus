@@ -9,7 +9,7 @@ class AppLocalizationsNds extends AppLocalizations {
   AppLocalizationsNds([String locale = 'nds']) : super(locale);
 
   @override
-  String get systemLanguage => 'Systemspraak';
+  String get systemLanguage => 'Systeemspraak';
 
   @override
   String get appTitle => 'cowculus';
@@ -18,75 +18,76 @@ class AppLocalizationsNds extends AppLocalizations {
   String get appBarTitle => 'AppBarTitel Platzholler';
 
   @override
-  String get calculatorTitle => 'Kälverplatz-Reekner';
+  String get calculatorTitle => 'Kalfbokse-Reekner';
 
   @override
   String get welcomeHeadline => 'Willkamen bi cowculus!';
 
   @override
   String get welcomeSubtitle =>
-      'Disse App geiht op de Masterarbeit vun Maren Thiemann torügg un maakt ehr Reeknertool för de Bestimmung vun enkelte Kälverplaatzen för de Praxis bruukbor. Se is maakt för Melkveehöllers un Beraters un hölpt bi’t Reeknen vun de Platzbedarv un dat Opdecken vun Mööglichkeiten to Verbesserungen in de Kälverholling.';
+      'Disse App büst op de Masterarbeit vun Maren Thiemann un bringt ehr Reekn-Warktüüch för enkelte Kalfboksen na de Praxis. Maak för Melkbüers un Beraters, hölpt se bi\'t Utreken vun de nödig Boksen un geevt Tipps för\'n besseren Umgang mit Kalfstalln.';
 
   @override
   String get splashExplanation =>
-      'Disse App hölpt Di bi’t Utfinnen, wo vele Kälverplaatzen Du för Dien Hof brauchst.';
+      'Disse App hölpt di bi\'t Utreken, wo vele Kalfboksen du op dien Hoff bruukst.';
 
   @override
   String get masterThesisCredit =>
-      'Utwickelt as Deel vun de Masterarbeit vun M. Thiemann, FH Süüdwestfalen.';
+      'Entwickelt as Deel vun de Masterarbeit vun M. Thiemann, FH Süüdwestfalen.';
 
   @override
   String get skipSplashCheckboxLabel =>
-      'Startschirm tom nächsten Maal övergahn';
+      'Disse Siet bi\'t Nächstemmaal övergahn';
 
   @override
   String get startCalculatorButton => 'Reekner starten';
 
   @override
-  String get mainParameterFormTitle => 'Giff Dien hofeegen Parameters in:';
+  String get mainParameterFormTitle => 'Giff diene Hoff-Daten in:';
 
   @override
-  String get resultsTitle => 'Resultaten vun de Kälverplatz-Reeknung:';
+  String get resultsTitle => 'Resultaten vun de Kalfboks-Utreken:';
 
   @override
-  String get panelTitleTierzahlen => 'Diertallen';
+  String get panelTitleTierzahlen => 'Dierntall';
 
   @override
-  String get panelTitleGeschlecht => 'Köönt-Verdeelen';
+  String get panelTitleGeschlecht => 'Geschlechterverteilen';
 
   @override
-  String get panelTitleZeit => 'Tied-Parameters';
+  String get panelTitleZeit => 'Tietdaten';
 
   @override
-  String get panelTitleReproduktion => 'Reproduktion & Gesondheit';
+  String get panelTitleReproduktion => 'Kalfung & Gesondheit';
 
   @override
   String get columnHeaderParameter => 'Parameter';
 
   @override
-  String get columnHeaderAktuell => 'Aktuell\n(hofeegen)';
+  String get columnHeaderAktuell => 'Aktuell\n(hof-spezifsch)';
 
   @override
-  String get columnHeaderRealistisch => 'Realistisch\n(Ø NRW/D, +25% Reserve)';
+  String get columnHeaderRealistisch =>
+      'Realistisch\n(Dörsnitt NRW/D, +25% Reserve)';
 
   @override
-  String get columnHeaderEmpfehlung => 'Raat\n(Verlööf)';
+  String get columnHeaderEmpfehlung => 'Anbeveelung\n(Beratung)';
 
   @override
-  String get rowLabelBullenkaelber => 'Bullen-Kälverplaatzen';
+  String get rowLabelBullenkaelber => 'Boksen för Bullenkalven';
 
   @override
-  String get rowLabelFaersenkaelber => 'Färsen-Kälverplaatzen';
+  String get rowLabelFaersenkaelber => 'Boksen för Quienkalven';
 
   @override
-  String get rowLabelGesamtPlaetze => 'Totel Plaatzen';
+  String get rowLabelGesamtPlaetze => 'Totaal Boksen';
 
   @override
   String get buttonTextBerechnen => 'Utreken';
 
   @override
   String get hinweisTextTabelle =>
-      '* Hinweis: \'Realistisch\' enthält 25% Reserve op de Totelplaatzen. \'Bullen-\' un \'Färsen-Kälverplaatzen\' sünd ahn disse szenariospezifische Reserve.';
+      '* Hinweis: \'Realistisch\' is mit 25% Reserve. Bullen- un Quienboksen sünd ahn disse Reserve wiest.';
 
   @override
   String get textFieldHint => 'Weert ingeven';
@@ -95,7 +96,7 @@ class AppLocalizationsNds extends AppLocalizations {
   String get validatorMsgBitteWertEingeben => 'Giff bitte en Weert in';
 
   @override
-  String get validatorMsgUngueltigeZahl => 'Keen gellen Tall';
+  String get validatorMsgUngueltigeZahl => 'Keen gellen Weert';
 
   @override
   String get validatorMsgWertMussPositivSein => 'Weert mutt positiv wesen';
@@ -110,110 +111,110 @@ class AppLocalizationsNds extends AppLocalizations {
   String get einheitTage => 'Daag';
 
   @override
-  String get textFormFieldLabelAnzahlMilchkuehe => 'Tall Melkkühe';
+  String get textFormFieldLabelAnzahlMilchkuehe => 'Tall vun Melkkühe';
 
   @override
   String get textFormFieldLabelAnzahlFaersen =>
-      'Tall Färsen, de afkalen (per Johr)';
+      'Tall vun Quienen för\'t Kalfen (per Johr)';
 
   @override
-  String get textFormFieldLabelAnteilMaennlKaelber => 'Andeel männliche Kälver';
+  String get textFormFieldLabelAnteilMaennlKaelber => 'Antail mannliek Kalven';
 
   @override
-  String get textFormFieldLabelZwischenkalbezeit => 'Tied twischen Afkalen';
+  String get textFormFieldLabelZwischenkalbezeit => 'Tiet twischen twee Kalfen';
 
   @override
   String get textFormFieldLabelHaltedauerBullen =>
-      'Hollduur Bullenkälver (Enkelholling)';
+      'Holtiet Bullenkalven (enkel)';
 
   @override
   String get textFormFieldLabelHaltedauerFaersen =>
-      'Hollduur Färsenkälver (Enkelholling)';
+      'Holtiet Quienkalven (enkel)';
 
   @override
   String get textFormFieldLabelLeerstandszeit =>
-      'Leegstandstied twischen Belegungen';
+      'Leegstandstiet twischen de Besetten';
 
   @override
-  String get textFormFieldLabelAbkalberate => 'Afkalrate';
+  String get textFormFieldLabelAbkalberate => 'Kalfquote';
 
   @override
   String get textFormFieldLabelFruehmortalitaet =>
-      'Frühstorv (% Kälver binnen 28 Daag)';
+      'Fruhtod (Kalven tot 28 Daag)';
 
   @override
-  String get textFormFieldLabelTotgeburtenrate => 'Doodborenrate (wahlwies)';
+  String get textFormFieldLabelTotgeburtenrate => 'Doodbiurt-Quote (optionaal)';
 
   @override
   String get textFormFieldLabelZwillingstraechtigkeiten =>
-      'Andeel Twegen-Drächtigkeiten';
+      'Twillingträchtigkeitsquote';
 
   @override
   String get tooltipAnzahlMilchkuehe =>
-      'Giff de dörsnittliche Tall Melkkühe in Dien Herd in.';
+      'Giff de Dörsnittstal vun Melkkühen op dien Hoff in.';
 
   @override
   String get tooltipAnzahlFaersen =>
-      'Tall Färsen, de binnen’t Johr för\'t eerst mol afkalen schullt.';
+      'Giff de Tall vun Quienen in, de in\'t nächste Johr toerst mal kalfen schöölt.';
 
   @override
   String get tooltipAnteilMaennlKaelber =>
-      'Wat för en Deel vun de Kälver sünd männlich? Normal üm 50%.';
+      'Antail vun de geborenen Kalven, de mannliek sünd. Normal üm 50%.';
 
   @override
   String get tooltipZwischenkalbezeit =>
-      'Tall Daag twischen twee Kalvings vun een Ko.';
+      'De Dörsnitt an Daag twischen twee Kalfungen bi en Ko.';
 
   @override
   String get tooltipHaltedauerBullen =>
-      'Wie lange blifft en Bullenkalb in’t Iglu oder Kälverbox?';
+      'Dörsnittdaag, wo\'n Bullenkalf in de enkelne Boks oder Hütte blifft.';
 
   @override
   String get tooltipHaltedauerFaersen =>
-      'Wie lange blifft en Färsenkalb in’t Iglu oder Kälverbox?';
+      'Dörsnittdaag, wo\'n Quienkalf in de enkelne Boks oder Hütte blifft.';
 
   @override
   String get tooltipLeerstandszeit =>
-      'Wieviele Daag steiht de Box oder’t Iglu leer, bevör dat wedder bruukt warrt?';
+      'Daag, de en Boks na\'t Utsetzen leddig is, vör se wiedergahn nutzt warrt (för Reenmaken/Desinfektion).';
 
   @override
   String get tooltipAbkalberate =>
-      'Wieviele Kühe/Färsen kalvt wirklich per Johr af?';
+      'De Prozentsatz vun de Kühe un Quienen, de faktisch kalft hebbt in\'t Johr.';
 
   @override
   String get tooltipFruehmortalitaet =>
-      'Wieviele Kälver storvt in de eerste 28 Daag?';
+      'Prozent vun Kalven, de in de eersten 28 Daag storvt sünd.';
 
   @override
   String get tooltipTotgeburtenrate =>
-      'Doodboren oder binnen 24 Stünnen storven. Wahlwies.';
+      'Optional: Prozent vun doodbiurten Kalven oder de binnen 24 Stünn storvt sünd.';
 
   @override
   String get tooltipZwillingstraechtigkeiten =>
-      'Wieviel Twegenbörs sünd dor bi de Drächtigkeiten?';
+      'Prozent vun Twillingsträchtigkeiten.';
 
   @override
   String get resultsPlaceholder =>
-      'Giff Dien Daten in un klick op \'Utreken\', denn kummt hier de Resultaten.';
+      'Giff diene Daten in un klick op \'Utreken\', denn sienst du hier de Resultaten.';
 
   @override
-  String get chartTitle => 'Grafische Ümfaten';
+  String get chartTitle => 'Grafisch Utdrück';
 
   @override
   String get buttonTextPdfExport => 'PDF exporteren';
 
   @override
   String get pdfErrorNoResults =>
-      'Keen Resultaten to exporteren. Bitte eerst utreken.';
+      'Keen Resultaten för Export. Maak eerst en Reekn.';
 
   @override
   String get pdfGenerating => 'PDF warrt maakt...';
 
   @override
-  String get pdfErrorGeneral => 'Fehler bi’t Maak’n vun’t PDF';
+  String get pdfErrorGeneral => 'Fehler bi\'t PDF-Maken';
 
   @override
-  String get pdfGeneratedOn => 'Maak op’n:';
+  String get pdfGeneratedOn => 'Maak op:';
 
   @override
   String get helpButtonTooltip => 'Hülp & Info';
@@ -226,29 +227,38 @@ class AppLocalizationsNds extends AppLocalizations {
 
   @override
   String get helpDialogAboutText =>
-      'Disse App geiht torügg op de Masterarbeit vun Maren Thiemann un maakt ehr Reeknertool för de Bedarvsbestimmung vun enkelte Kälverplaatzen bruukbor för de Praxis. Se hölpt Melkveehöllers un Beraters bi’t Reeknen un Updecken vun Optimierungspotenzialen.';
+      'Disse App büst op de Masterarbeit vun Maren Thiemann un bringt ehr Reekner för enkelte Kalfboksen in de Praxis. Se hölpt Melkbüers un Beraters bi’t Utreken vun Platzbedarf un för’t finnen vun Verbesserungsmöglichkeiten in de Kalfstall-Leedung.';
 
   @override
-  String get helpDialogUsageTitle => 'Anwennen';
+  String get helpDialogUsageTitle => 'So bruukst du de App';
 
   @override
   String get helpDialogUsageText =>
-      '1. Giff Dien Parameters in\n2. Klick op \'Utreken\'\n3. Kiek de Resultaten in de Tabel un Diagramm an\n4. Bruuk de dree Szenarios för de Planung';
+      '1. Giff dien Hof-Daten in de Felder in\n2. Klick op \'Utreken\'';
 
   @override
-  String get helpDialogScenariosTitle => 'Szenarios';
+  String get helpDialogScenariosTitle => 'Szenarien';
 
   @override
   String get helpDialogScenariosText =>
-      '• Aktuell: Diene Angaben\n• Realistisch: Ø NRW/Deutschland mit 25% Reserve\n• Raat: Optimierte Raten för Beraters';
+      '• Aktuell: Dien ingeven Daten\n• Realistisch: Dörsnittswerten ut NRW/D mit 25% Reserve\n• Anbeveelung: Optimierte Werten för de Beratung';
 
   @override
-  String get helpDialogCloseButton => 'Tomaaken';
+  String get helpDialogCloseButton => 'Tomaken';
 
   @override
   String get programmerInfo =>
-      'Maak vun Daniel Kirchhoff • App-Entwicklung un Technik • Kontakt: info@danielkirchhoff.de';
+      'Maakt vun Daniel Kirchhoff • App-Entwikkelung un Technik • Kontakt: info@danielkirchhoff.de';
 
   @override
-  String get appVersion => 'Version 1.0.0';
+  String get appVersion => 'Verschoon 1.0.0';
+
+  @override
+  String get loadingCalculating => 'Bi’t Utreken...';
+
+  @override
+  String get loadingPleaseWait => 'Bitte en lütt beten Geduld';
+
+  @override
+  String get buttonTextCalculating => 'Reekn löppt...';
 }

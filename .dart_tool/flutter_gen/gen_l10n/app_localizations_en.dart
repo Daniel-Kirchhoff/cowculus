@@ -233,7 +233,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpDialogUsageText =>
-      '1. Enter your farm-specific parameters in the input fields\n2. Click \'Calculate\'\n3. View the results in the table and chart\n4. Use the three scenarios for different planning approaches';
+      '1. Enter your farm-specific parameters in the input fields\n2. Click \'Calculate\'';
 
   @override
   String get helpDialogScenariosTitle => 'Scenarios';
@@ -251,4 +251,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get appVersion => 'Version 1.0.0';
+
+  @override
+  String get loadingCalculating => 'Calculating...';
+
+  @override
+  String get loadingPleaseWait => 'Please wait a moment';
+
+  @override
+  String get buttonTextCalculating => 'Calculating...';
 }
