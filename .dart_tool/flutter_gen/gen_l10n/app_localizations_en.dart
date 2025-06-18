@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -22,13 +24,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get welcomeHeadline => 'Welcome to cowculus!';
 
   @override
-  String get welcomeSubtitle => 'This app is based on the master’s thesis by Maren Thiemann and brings her calculation tool for determining the need for individual calf pens into practice. Designed for dairy farmers and advisors, it helps you calculate your specific space requirements and identify opportunities to improve calf housing management.';
+  String get welcomeSubtitle =>
+      'This app is based on the master’s thesis by Maren Thiemann and brings her calculation tool for determining the need for individual calf pens into practice. Designed for dairy farmers and advisors, it helps you calculate your specific space requirements and identify opportunities to improve calf housing management.';
 
   @override
-  String get splashExplanation => 'This app helps you determine the required number of calf pens for your farm.';
+  String get splashExplanation =>
+      'This app helps you determine the required number of calf pens for your farm.';
 
   @override
-  String get masterThesisCredit => 'Developed as part of the master\'s thesis by M. Thiemann, FH Südwestfalen.';
+  String get masterThesisCredit =>
+      'Developed as part of the master\'s thesis by M. Thiemann, FH Südwestfalen.';
 
   @override
   String get skipSplashCheckboxLabel => 'Skip this page next time';
@@ -79,7 +84,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buttonTextBerechnen => 'Calculate';
 
   @override
-  String get hinweisTextTabelle => '* Note: \'Realistic\' includes a 25% reserve on total pens. \'Bull calf\' and \'Heifer calf pens\' are shown without this scenario-specific reserve.';
+  String get hinweisTextTabelle =>
+      '* Note: \'Realistic\' includes a 25% reserve on total pens. \'Bull calf\' and \'Heifer calf pens\' are shown without this scenario-specific reserve.';
 
   @override
   String get textFieldHint => 'Enter value';
@@ -106,68 +112,143 @@ class AppLocalizationsEn extends AppLocalizations {
   String get textFormFieldLabelAnzahlMilchkuehe => 'Number of Dairy Cows';
 
   @override
-  String get textFormFieldLabelAnzahlFaersen => 'Number of Heifers for Calving (per year)';
+  String get textFormFieldLabelAnzahlFaersen =>
+      'Number of Heifers for Calving (per year)';
 
   @override
-  String get textFormFieldLabelAnteilMaennlKaelber => 'Percentage of Male Calves';
+  String get textFormFieldLabelAnteilMaennlKaelber =>
+      'Percentage of Male Calves';
 
   @override
   String get textFormFieldLabelZwischenkalbezeit => 'Inter-Calving Interval';
 
   @override
-  String get textFormFieldLabelHaltedauerBullen => 'Housing Duration Bull Calves (single)';
+  String get textFormFieldLabelHaltedauerBullen =>
+      'Housing Duration Bull Calves (single)';
 
   @override
-  String get textFormFieldLabelHaltedauerFaersen => 'Housing Duration Heifer Calves (single)';
+  String get textFormFieldLabelHaltedauerFaersen =>
+      'Housing Duration Heifer Calves (single)';
 
   @override
-  String get textFormFieldLabelLeerstandszeit => 'Vacancy Period Between Occupancies';
+  String get textFormFieldLabelLeerstandszeit =>
+      'Vacancy Period Between Occupancies';
 
   @override
   String get textFormFieldLabelAbkalberate => 'Calving Rate';
 
   @override
-  String get textFormFieldLabelFruehmortalitaet => 'Early Mortality (calves up to 28 days)';
+  String get textFormFieldLabelFruehmortalitaet =>
+      'Early Mortality (calves up to 28 days)';
 
   @override
   String get textFormFieldLabelTotgeburtenrate => 'Stillbirth Rate (optional)';
 
   @override
-  String get textFormFieldLabelZwillingstraechtigkeiten => 'Twin Pregnancy Rate';
+  String get textFormFieldLabelZwillingstraechtigkeiten =>
+      'Twin Pregnancy Rate';
 
   @override
-  String get tooltipAnzahlMilchkuehe => 'Enter the average number of lactating cows in your herd.';
+  String get tooltipAnzahlMilchkuehe =>
+      'Enter the average number of lactating cows in your herd.';
 
   @override
-  String get tooltipAnzahlFaersen => 'Enter the number of heifers expected to calve for the first time in the coming year.';
+  String get tooltipAnzahlFaersen =>
+      'Enter the number of heifers expected to calve for the first time in the coming year.';
 
   @override
-  String get tooltipAnteilMaennlKaelber => 'The percentage of born calves that are male. Usually around 50%.';
+  String get tooltipAnteilMaennlKaelber =>
+      'The percentage of born calves that are male. Usually around 50%.';
 
   @override
-  String get tooltipZwischenkalbezeit => 'The average number of days between two consecutive calvings of a cow.';
+  String get tooltipZwischenkalbezeit =>
+      'The average number of days between two consecutive calvings of a cow.';
 
   @override
-  String get tooltipHaltedauerBullen => 'The average number of days a bull calf remains in a single hutch or calf box after birth.';
+  String get tooltipHaltedauerBullen =>
+      'The average number of days a bull calf remains in a single hutch or calf box after birth.';
 
   @override
-  String get tooltipHaltedauerFaersen => 'The average number of days a heifer calf remains in a single hutch or calf box after birth.';
+  String get tooltipHaltedauerFaersen =>
+      'The average number of days a heifer calf remains in a single hutch or calf box after birth.';
 
   @override
-  String get tooltipLeerstandszeit => 'The number of days a box or hutch remains empty after a calf is moved out before it is reoccupied (for cleaning and disinfection).';
+  String get tooltipLeerstandszeit =>
+      'The number of days a box or hutch remains empty after a calf is moved out before it is reoccupied (for cleaning and disinfection).';
 
   @override
-  String get tooltipAbkalberate => 'The percentage of cows and heifers intended for calving that actually calve per year.';
+  String get tooltipAbkalberate =>
+      'The percentage of cows and heifers intended for calving that actually calve per year.';
 
   @override
-  String get tooltipFruehmortalitaet => 'The percentage of calves that die within the first 28 days of life.';
+  String get tooltipFruehmortalitaet =>
+      'The percentage of calves that die within the first 28 days of life.';
 
   @override
-  String get tooltipTotgeburtenrate => 'Optional: The percentage of calves that are stillborn or die within the first 24 hours.';
+  String get tooltipTotgeburtenrate =>
+      'Optional: The percentage of calves that are stillborn or die within the first 24 hours.';
 
   @override
-  String get tooltipZwillingstraechtigkeiten => 'The percentage of pregnancies that result in twin births.';
+  String get tooltipZwillingstraechtigkeiten =>
+      'The percentage of pregnancies that result in twin births.';
 
   @override
-  String get resultsPlaceholder => 'Enter your data and click \'Calculate\' to display the results here.';
+  String get resultsPlaceholder =>
+      'Enter your data and click \'Calculate\' to display the results here.';
+
+  @override
+  String get chartTitle => 'Graphical Analysis';
+
+  @override
+  String get buttonTextPdfExport => 'Export PDF';
+
+  @override
+  String get pdfErrorNoResults =>
+      'No results to export. Please calculate first.';
+
+  @override
+  String get pdfGenerating => 'Generating PDF...';
+
+  @override
+  String get pdfErrorGeneral => 'Error creating PDF';
+
+  @override
+  String get pdfGeneratedOn => 'Generated on:';
+
+  @override
+  String get helpButtonTooltip => 'Help & Information';
+
+  @override
+  String get helpDialogTitle => 'App Information';
+
+  @override
+  String get helpDialogAboutTitle => 'About cowculus';
+
+  @override
+  String get helpDialogAboutText =>
+      'This app is based on the master\'s thesis by Maren Thiemann and brings her calculation tool for determining the need for individual calf pens into practice. It helps dairy farmers and advisors calculate individual space requirements and identify optimization opportunities in calf housing management.';
+
+  @override
+  String get helpDialogUsageTitle => 'How to Use';
+
+  @override
+  String get helpDialogUsageText =>
+      '1. Enter your farm-specific parameters in the input fields\n2. Click \'Calculate\'\n3. View the results in the table and chart\n4. Use the three scenarios for different planning approaches';
+
+  @override
+  String get helpDialogScenariosTitle => 'Scenarios';
+
+  @override
+  String get helpDialogScenariosText =>
+      '• Current: Based on your entered farm-specific values\n• Realistic: Uses average values from NRW/Germany with 25% safety reserve\n• Recommendation: Offers optimized recommendation values for consulting';
+
+  @override
+  String get helpDialogCloseButton => 'Close';
+
+  @override
+  String get programmerInfo =>
+      'Developed by Daniel Kirchhoff • App development and technical implementation • Contact: info@danielkirchhoff.de';
+
+  @override
+  String get appVersion => 'Version 1.0.0';
 }

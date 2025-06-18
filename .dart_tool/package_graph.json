@@ -22,7 +22,7 @@
     },
     {
       "name": "build_runner",
-      "version": "2.5.0",
+      "version": "2.5.1",
       "dependencies": [
         "analyzer",
         "args",
@@ -64,7 +64,7 @@
     },
     {
       "name": "flutter_lints",
-      "version": "4.0.0",
+      "version": "6.0.0",
       "dependencies": [
         "lints"
       ]
@@ -387,7 +387,7 @@
     },
     {
       "name": "build_runner_core",
-      "version": "9.0.0",
+      "version": "9.0.1",
       "dependencies": [
         "analyzer",
         "async",
@@ -415,7 +415,7 @@
     },
     {
       "name": "build_resolvers",
-      "version": "2.5.0",
+      "version": "2.5.1",
       "dependencies": [
         "analyzer",
         "async",
@@ -465,7 +465,7 @@
     },
     {
       "name": "build",
-      "version": "2.5.0",
+      "version": "2.5.1",
       "dependencies": [
         "analyzer",
         "async",
@@ -516,7 +516,7 @@
     },
     {
       "name": "lints",
-      "version": "4.0.0",
+      "version": "6.0.0",
       "dependencies": []
     },
     {

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_nds.dart';
 
 // ignore_for_file: type=lint
 
@@ -62,7 +63,8 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale)
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -70,7 +72,8 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate =
+      _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -82,7 +85,8 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
     delegate,
     GlobalMaterialLocalizations.delegate,
     GlobalCupertinoLocalizations.delegate,
@@ -92,7 +96,8 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
-    Locale('en')
+    Locale('en'),
+    Locale('nds')
   ];
 
   /// No description provided for @systemLanguage.
@@ -424,9 +429,112 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geben Sie Ihre Daten ein und klicken Sie auf \'Berechnen\', um die Ergebnisse hier anzuzeigen.'**
   String get resultsPlaceholder;
+
+  /// No description provided for @chartTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Grafische Auswertung'**
+  String get chartTitle;
+
+  /// No description provided for @buttonTextPdfExport.
+  ///
+  /// In de, this message translates to:
+  /// **'PDF exportieren'**
+  String get buttonTextPdfExport;
+
+  /// No description provided for @pdfErrorNoResults.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Ergebnisse zum Exportieren vorhanden. Bitte zuerst berechnen.'**
+  String get pdfErrorNoResults;
+
+  /// No description provided for @pdfGenerating.
+  ///
+  /// In de, this message translates to:
+  /// **'PDF wird erstellt...'**
+  String get pdfGenerating;
+
+  /// No description provided for @pdfErrorGeneral.
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Erstellen des PDF'**
+  String get pdfErrorGeneral;
+
+  /// No description provided for @pdfGeneratedOn.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstellt am:'**
+  String get pdfGeneratedOn;
+
+  /// No description provided for @helpButtonTooltip.
+  ///
+  /// In de, this message translates to:
+  /// **'Hilfe & Information'**
+  String get helpButtonTooltip;
+
+  /// No description provided for @helpDialogTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'App-Information'**
+  String get helpDialogTitle;
+
+  /// No description provided for @helpDialogAboutTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Über cowculus'**
+  String get helpDialogAboutTitle;
+
+  /// No description provided for @helpDialogAboutText.
+  ///
+  /// In de, this message translates to:
+  /// **'Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Sie hilft Milchviehhaltern und Beratern dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.'**
+  String get helpDialogAboutText;
+
+  /// No description provided for @helpDialogUsageTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Bedienung'**
+  String get helpDialogUsageTitle;
+
+  /// No description provided for @helpDialogUsageText.
+  ///
+  /// In de, this message translates to:
+  /// **'1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf \'Berechnen\'\n3. Betrachten Sie die Ergebnisse in der Tabelle und im Diagramm\n4. Nutzen Sie die drei Szenarien für verschiedene Planungsansätze'**
+  String get helpDialogUsageText;
+
+  /// No description provided for @helpDialogScenariosTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'Szenarien'**
+  String get helpDialogScenariosTitle;
+
+  /// No description provided for @helpDialogScenariosText.
+  ///
+  /// In de, this message translates to:
+  /// **'• Aktuell: Basiert auf Ihren eingegebenen betriebsspezifischen Werten\n• Realistisch: Verwendet Durchschnittswerte aus NRW/Deutschland mit 25% Sicherheitsreserve\n• Empfehlung: Bietet optimierte Empfehlungswerte für die Beratung'**
+  String get helpDialogScenariosText;
+
+  /// No description provided for @helpDialogCloseButton.
+  ///
+  /// In de, this message translates to:
+  /// **'Schließen'**
+  String get helpDialogCloseButton;
+
+  /// No description provided for @programmerInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Entwickelt von Daniel Kirchhoff • App-Entwicklung und technische Umsetzung • Kontakt: info@danielkirchhoff.de'**
+  String get programmerInfo;
+
+  /// No description provided for @appVersion.
+  ///
+  /// In de, this message translates to:
+  /// **'Version 1.0.0'**
+  String get appVersion;
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -435,25 +543,27 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['de', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['de', 'en', 'nds'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'de': return AppLocalizationsDe();
-    case 'en': return AppLocalizationsEn();
+    case 'de':
+      return AppLocalizationsDe();
+    case 'en':
+      return AppLocalizationsEn();
+    case 'nds':
+      return AppLocalizationsNds();
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

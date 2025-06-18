@@ -23,11 +23,14 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   final Map<String, TextEditingController> _controllers = {};
   final List<bool> _isExpanded = [true, false, false, false];
   late final FocusNode _buttonFocusNode;
+  late final ScrollController _scrollController;
+  final GlobalKey _resultsKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _buttonFocusNode = FocusNode();
+    _scrollController = ScrollController();
     final eingabe = ref.read(eingabeProvider);
     _controllers['anzahlMilchkuehe'] =
         TextEditingController(text: eingabe.anzahlMilchkuehe.toString());
@@ -57,8 +60,30 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
   @override
   void dispose() {
     _buttonFocusNode.dispose();
+    _scrollController.dispose();
     _controllers.forEach((key, controller) => controller.dispose());
     super.dispose();
+  }
+
+  void _scrollToResults() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < kDesktopBreakpoint;
+
+    if (isMobile) {
+      final RenderBox? renderBox =
+          _resultsKey.currentContext?.findRenderObject() as RenderBox?;
+
+      if (renderBox != null) {
+        final position = renderBox.localToGlobal(Offset.zero);
+        final scrollOffset = position.dy + _scrollController.offset - 100;
+
+        _scrollController.animateTo(
+          scrollOffset,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
   }
 
   void _submitAndCalculate() {
@@ -96,6 +121,10 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
         empfehlung: empfehlungErgebnis,
       );
       ref.read(ergebnisProvider.notifier).state = ergebnisse;
+
+      Future.delayed(const Duration(milliseconds: 100), () {
+        _scrollToResults();
+      });
     }
   }
 
@@ -370,6 +399,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
       );
     }
     return Column(
+      key: _resultsKey,
       children: [
         ErgebnisChartWidget(
           aktuellErgebnis: ergebnisse.aktuell,
@@ -727,6 +757,7 @@ class _RechnerBildschirmState extends ConsumerState<RechnerBildschirm> {
 
   Widget _buildMobileLayout(AppLocalizations l10n) {
     return SingleChildScrollView(
+      controller: _scrollController,
       padding: const EdgeInsets.all(kPaddingLarge),
       child: Column(
         children: [

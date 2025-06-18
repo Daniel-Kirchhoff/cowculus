@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -22,22 +24,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get welcomeHeadline => 'Willkommen bei cowculus!';
 
   @override
-  String get welcomeSubtitle => 'Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Entwickelt für Milchviehhalter und Berater, unterstützt sie Sie dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.';
+  String get welcomeSubtitle =>
+      'Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Entwickelt für Milchviehhalter und Berater, unterstützt sie Sie dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.';
 
   @override
-  String get splashExplanation => 'Diese App hilft Ihnen bei der Ermittlung des Bedarfs an Kälberplätzen für Ihren landwirtschaftlichen Betrieb.';
+  String get splashExplanation =>
+      'Diese App hilft Ihnen bei der Ermittlung des Bedarfs an Kälberplätzen für Ihren landwirtschaftlichen Betrieb.';
 
   @override
-  String get masterThesisCredit => 'Entwickelt im Rahmen der Masterarbeit von M. Thiemann, FH Südwestfalen.';
+  String get masterThesisCredit =>
+      'Entwickelt im Rahmen der Masterarbeit von M. Thiemann, FH Südwestfalen.';
 
   @override
-  String get skipSplashCheckboxLabel => 'Startseite beim nächsten Mal überspringen';
+  String get skipSplashCheckboxLabel =>
+      'Startseite beim nächsten Mal überspringen';
 
   @override
   String get startCalculatorButton => 'Rechner starten';
 
   @override
-  String get mainParameterFormTitle => 'Betriebsindividuelle Parameter eingeben:';
+  String get mainParameterFormTitle =>
+      'Betriebsindividuelle Parameter eingeben:';
 
   @override
   String get resultsTitle => 'Ergebnisse der Kälberplatzberechnung:';
@@ -79,7 +86,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get buttonTextBerechnen => 'Berechnen';
 
   @override
-  String get hinweisTextTabelle => '* Hinweis: \'Realistisch\' beinhaltet 25% Reserve auf die Gesamtplätze. \'Bullenkälber-\' und \'Färsenkälber-Plätze\' werden ohne diese szenariospezifische Reserve ausgewiesen.';
+  String get hinweisTextTabelle =>
+      '* Hinweis: \'Realistisch\' beinhaltet 25% Reserve auf die Gesamtplätze. \'Bullenkälber-\' und \'Färsenkälber-Plätze\' werden ohne diese szenariospezifische Reserve ausgewiesen.';
 
   @override
   String get textFieldHint => 'Wert eingeben';
@@ -106,68 +114,143 @@ class AppLocalizationsDe extends AppLocalizations {
   String get textFormFieldLabelAnzahlMilchkuehe => 'Anzahl Milchkühe';
 
   @override
-  String get textFormFieldLabelAnzahlFaersen => 'Anzahl Färsen zur Abkalbung (pro Jahr)';
+  String get textFormFieldLabelAnzahlFaersen =>
+      'Anzahl Färsen zur Abkalbung (pro Jahr)';
 
   @override
-  String get textFormFieldLabelAnteilMaennlKaelber => 'Anteil männlicher Kälber';
+  String get textFormFieldLabelAnteilMaennlKaelber =>
+      'Anteil männlicher Kälber';
 
   @override
   String get textFormFieldLabelZwischenkalbezeit => 'Zwischenkalbezeit';
 
   @override
-  String get textFormFieldLabelHaltedauerBullen => 'Haltedauer Bullenkälber (Einzelhaltung)';
+  String get textFormFieldLabelHaltedauerBullen =>
+      'Haltedauer Bullenkälber (Einzelhaltung)';
 
   @override
-  String get textFormFieldLabelHaltedauerFaersen => 'Haltedauer Färsenkälber (Einzelhaltung)';
+  String get textFormFieldLabelHaltedauerFaersen =>
+      'Haltedauer Färsenkälber (Einzelhaltung)';
 
   @override
-  String get textFormFieldLabelLeerstandszeit => 'Leerstandszeit zwischen Belegungen';
+  String get textFormFieldLabelLeerstandszeit =>
+      'Leerstandszeit zwischen Belegungen';
 
   @override
   String get textFormFieldLabelAbkalberate => 'Abkalberate';
 
   @override
-  String get textFormFieldLabelFruehmortalitaet => 'Frühmortalität (Kälber bis 28 Tage)';
+  String get textFormFieldLabelFruehmortalitaet =>
+      'Frühmortalität (Kälber bis 28 Tage)';
 
   @override
   String get textFormFieldLabelTotgeburtenrate => 'Totgeburtenrate (optional)';
 
   @override
-  String get textFormFieldLabelZwillingstraechtigkeiten => 'Anteil Zwillingsträchtigkeiten';
+  String get textFormFieldLabelZwillingstraechtigkeiten =>
+      'Anteil Zwillingsträchtigkeiten';
 
   @override
-  String get tooltipAnzahlMilchkuehe => 'Geben Sie die durchschnittliche Anzahl der laktierenden Kühe in Ihrer Herde an.';
+  String get tooltipAnzahlMilchkuehe =>
+      'Geben Sie die durchschnittliche Anzahl der laktierenden Kühe in Ihrer Herde an.';
 
   @override
-  String get tooltipAnzahlFaersen => 'Geben Sie die Anzahl der Färsen an, die voraussichtlich im kommenden Jahr zum ersten Mal kalben werden.';
+  String get tooltipAnzahlFaersen =>
+      'Geben Sie die Anzahl der Färsen an, die voraussichtlich im kommenden Jahr zum ersten Mal kalben werden.';
 
   @override
-  String get tooltipAnteilMaennlKaelber => 'Der prozentuale Anteil der geborenen Kälber, die männlich sind. Üblicherweise um die 50%.';
+  String get tooltipAnteilMaennlKaelber =>
+      'Der prozentuale Anteil der geborenen Kälber, die männlich sind. Üblicherweise um die 50%.';
 
   @override
-  String get tooltipZwischenkalbezeit => 'Die durchschnittliche Anzahl der Tage zwischen zwei aufeinanderfolgenden Kalbungen einer Kuh.';
+  String get tooltipZwischenkalbezeit =>
+      'Die durchschnittliche Anzahl der Tage zwischen zwei aufeinanderfolgenden Kalbungen einer Kuh.';
 
   @override
-  String get tooltipHaltedauerBullen => 'Die durchschnittliche Anzahl der Tage, die ein Bullenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.';
+  String get tooltipHaltedauerBullen =>
+      'Die durchschnittliche Anzahl der Tage, die ein Bullenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.';
 
   @override
-  String get tooltipHaltedauerFaersen => 'Die durchschnittliche Anzahl der Tage, die ein Färsenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.';
+  String get tooltipHaltedauerFaersen =>
+      'Die durchschnittliche Anzahl der Tage, die ein Färsenkalb nach der Geburt im Einzel-Iglu oder in der Kälberbox verbleibt.';
 
   @override
-  String get tooltipLeerstandszeit => 'Die Anzahl der Tage, die eine Box oder ein Iglu nach dem Ausstallen eines Kalbes leer steht, bevor es neu belegt wird (für Reinigung und Desinfektion).';
+  String get tooltipLeerstandszeit =>
+      'Die Anzahl der Tage, die eine Box oder ein Iglu nach dem Ausstallen eines Kalbes leer steht, bevor es neu belegt wird (für Reinigung und Desinfektion).';
 
   @override
-  String get tooltipAbkalberate => 'Der prozentuale Anteil der Kühe und zur Abkalbung vorgesehenen Färsen, die pro Jahr tatsächlich kalben.';
+  String get tooltipAbkalberate =>
+      'Der prozentuale Anteil der Kühe und zur Abkalbung vorgesehenen Färsen, die pro Jahr tatsächlich kalben.';
 
   @override
-  String get tooltipFruehmortalitaet => 'Der prozentuale Anteil der Kälber, die in den ersten 28 Lebenstagen verenden.';
+  String get tooltipFruehmortalitaet =>
+      'Der prozentuale Anteil der Kälber, die in den ersten 28 Lebenstagen verenden.';
 
   @override
-  String get tooltipTotgeburtenrate => 'Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.';
+  String get tooltipTotgeburtenrate =>
+      'Optional: Der prozentuale Anteil der Kälber, die tot geboren werden oder innerhalb der ersten 24 Stunden verenden.';
 
   @override
-  String get tooltipZwillingstraechtigkeiten => 'Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.';
+  String get tooltipZwillingstraechtigkeiten =>
+      'Der prozentuale Anteil der Trächtigkeiten, die zu Zwillingsgeburten führen.';
 
   @override
-  String get resultsPlaceholder => 'Geben Sie Ihre Daten ein und klicken Sie auf \'Berechnen\', um die Ergebnisse hier anzuzeigen.';
+  String get resultsPlaceholder =>
+      'Geben Sie Ihre Daten ein und klicken Sie auf \'Berechnen\', um die Ergebnisse hier anzuzeigen.';
+
+  @override
+  String get chartTitle => 'Grafische Auswertung';
+
+  @override
+  String get buttonTextPdfExport => 'PDF exportieren';
+
+  @override
+  String get pdfErrorNoResults =>
+      'Keine Ergebnisse zum Exportieren vorhanden. Bitte zuerst berechnen.';
+
+  @override
+  String get pdfGenerating => 'PDF wird erstellt...';
+
+  @override
+  String get pdfErrorGeneral => 'Fehler beim Erstellen des PDF';
+
+  @override
+  String get pdfGeneratedOn => 'Erstellt am:';
+
+  @override
+  String get helpButtonTooltip => 'Hilfe & Information';
+
+  @override
+  String get helpDialogTitle => 'App-Information';
+
+  @override
+  String get helpDialogAboutTitle => 'Über cowculus';
+
+  @override
+  String get helpDialogAboutText =>
+      'Diese App basiert auf der Masterarbeit von Maren Thiemann und setzt ihr Kalkulationstool zur Bedarfsbestimmung von Einzelplätzen für Kälber in der Praxis um. Sie hilft Milchviehhaltern und Beratern dabei, den individuellen Platzbedarf zu berechnen und Optimierungspotenziale im Management der Kälberhaltung zu erkennen.';
+
+  @override
+  String get helpDialogUsageTitle => 'Bedienung';
+
+  @override
+  String get helpDialogUsageText =>
+      '1. Geben Sie Ihre betriebsindividuellen Parameter in die Eingabefelder ein\n2. Klicken Sie auf \'Berechnen\'\n3. Betrachten Sie die Ergebnisse in der Tabelle und im Diagramm\n4. Nutzen Sie die drei Szenarien für verschiedene Planungsansätze';
+
+  @override
+  String get helpDialogScenariosTitle => 'Szenarien';
+
+  @override
+  String get helpDialogScenariosText =>
+      '• Aktuell: Basiert auf Ihren eingegebenen betriebsspezifischen Werten\n• Realistisch: Verwendet Durchschnittswerte aus NRW/Deutschland mit 25% Sicherheitsreserve\n• Empfehlung: Bietet optimierte Empfehlungswerte für die Beratung';
+
+  @override
+  String get helpDialogCloseButton => 'Schließen';
+
+  @override
+  String get programmerInfo =>
+      'Entwickelt von Daniel Kirchhoff • App-Entwicklung und technische Umsetzung • Kontakt: info@danielkirchhoff.de';
+
+  @override
+  String get appVersion => 'Version 1.0.0';
 }
